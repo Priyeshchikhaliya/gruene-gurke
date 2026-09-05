@@ -31,16 +31,17 @@ export async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const path = request.nextUrl.pathname;
-  const isLogin = path === "/admin/anmelden";
+  // Anmeldung und das Setzen des Passworts brauchen noch keine Sitzung.
+  const isPublicAdminPage = path === "/admin/anmelden" || path === "/admin/passwort";
 
-  if (!user && !isLogin) {
+  if (!user && !isPublicAdminPage) {
     const target = request.nextUrl.clone();
     target.pathname = "/admin/anmelden";
     target.searchParams.set("weiter", path);
     return NextResponse.redirect(target);
   }
 
-  if (user && isLogin) {
+  if (user && path === "/admin/anmelden") {
     const target = request.nextUrl.clone();
     target.pathname = "/admin";
     target.search = "";

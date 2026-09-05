@@ -34,6 +34,7 @@ Danach das Datenbankschema einspielen – siehe [`supabase/README.md`](supabase/
 | `npm run build` | Produktionsbuild                     |
 | `npm run start` | Produktionsbuild ausliefern          |
 | `npm run lint`  | ESLint                               |
+| `npm run seed`  | Inhalte aus `src/lib` in die Datenbank schreiben |
 | `npm run seed:generate` | `supabase/seed.sql` aus `src/lib` neu erzeugen |
 
 ## Seiten
