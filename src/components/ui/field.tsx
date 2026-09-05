@@ -1,0 +1,45 @@
+import type { InputHTMLAttributes, SelectHTMLAttributes, TextareaHTMLAttributes } from "react";
+import { cn } from "@/lib/utils";
+
+const control =
+  "w-full rounded-lg border border-border bg-surface px-4 py-3 text-base text-foreground placeholder:text-ink-400 transition-colors focus:border-forest-700 focus:outline-none aria-[invalid=true]:border-red-600";
+
+export function Label({ htmlFor, children, hint }: { htmlFor: string; children: string; hint?: string }) {
+  return (
+    <label htmlFor={htmlFor} className="mb-2 block text-sm font-medium text-forest-900">
+      {children}
+      {hint ? <span className="ml-1 font-normal text-ink-400">({hint})</span> : null}
+    </label>
+  );
+}
+
+export function FieldError({ id, message }: { id: string; message?: string }) {
+  if (!message) return null;
+  return (
+    <p id={id} role="alert" className="mt-2 text-sm text-red-700">
+      {message}
+    </p>
+  );
+}
+
+export function Input({ className, ...props }: InputHTMLAttributes<HTMLInputElement>) {
+  return <input className={cn(control, className)} {...props} />;
+}
+
+export function Textarea({ className, ...props }: TextareaHTMLAttributes<HTMLTextAreaElement>) {
+  return <textarea className={cn(control, "min-h-32 resize-y", className)} {...props} />;
+}
+
+export function Select({ className, ...props }: SelectHTMLAttributes<HTMLSelectElement>) {
+  return <select className={cn(control, "appearance-none bg-surface", className)} {...props} />;
+}
+
+/** Hidden anti-spam field. Bots fill it, humans never see it. */
+export function Honeypot() {
+  return (
+    <div aria-hidden="true" className="absolute -left-[9999px] top-0 h-px w-px overflow-hidden">
+      <label htmlFor="website">Website</label>
+      <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" />
+    </div>
+  );
+}

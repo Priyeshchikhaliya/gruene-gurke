@@ -1,0 +1,108 @@
+{
+  "meta": {
+    "title": "Grüne Gurke · Restaurant",
+    "description": "Saisonale Küche, ehrliche Zutaten und ein Ort zum Verweilen. Reservieren Sie Ihren Tisch in der Grünen Gurke."
+  },
+  "nav": {
+    "home": "Start",
+    "menu": "Speisekarte",
+    "gallery": "Galerie",
+    "contact": "Kontakt",
+    "reserve": "Tisch reservieren",
+    "openMenu": "Menü öffnen",
+    "closeMenu": "Menü schließen"
+  },
+  "common": {
+    "language": "Sprache",
+    "loading": "Wird gesendet …",
+    "submit": "Absenden",
+    "required": "Pflichtfeld",
+    "optional": "optional"
+  },
+  "home": {
+    "eyebrow": "Restaurant · Berlin",
+    "title": "Grüne Gurke",
+    "subtitle": "Saisonale Küche, ehrliche Zutaten und ein Tisch, an dem man gern länger bleibt.",
+    "ctaReserve": "Tisch reservieren",
+    "ctaMenu": "Zur Speisekarte",
+    "hoursTitle": "Öffnungszeiten",
+    "addressTitle": "Adresse"
+  },
+  "menu": {
+    "title": "Speisekarte",
+    "intro": "Unsere Karte wechselt mit den Jahreszeiten. Hier kommt bald die aktuelle Auswahl.",
+    "comingSoon": "Die Speisekarte wird gerade vorbereitet."
+  },
+  "gallery": {
+    "title": "Galerie",
+    "intro": "Einblicke in Küche, Raum und Teller.",
+    "comingSoon": "Bilder folgen in Kürze."
+  },
+  "reservations": {
+    "title": "Tisch reservieren",
+    "intro": "Senden Sie uns Ihre Anfrage – wir bestätigen sie so schnell wie möglich per E-Mail.",
+    "form": {
+      "name": "Name",
+      "email": "E-Mail",
+      "phone": "Telefon",
+      "date": "Datum",
+      "time": "Uhrzeit",
+      "guests": "Personen",
+      "message": "Anmerkungen",
+      "messagePlaceholder": "Allergien, Anlass, Kinderstuhl …",
+      "submit": "Anfrage senden",
+      "success": "Vielen Dank! Ihre Anfrage ist bei uns eingegangen. Wir melden uns in Kürze per E-Mail.",
+      "genericError": "Das hat leider nicht geklappt. Bitte versuchen Sie es erneut oder rufen Sie uns an."
+    },
+    "errors": {
+      "required": "Bitte ausfüllen.",
+      "tooShort": "Bitte etwas ausführlicher.",
+      "tooLong": "Bitte kürzer fassen.",
+      "invalidEmail": "Bitte eine gültige E-Mail-Adresse angeben.",
+      "invalidPhone": "Bitte eine gültige Telefonnummer angeben.",
+      "invalidDate": "Bitte ein gültiges Datum wählen.",
+      "pastDate": "Das Datum liegt in der Vergangenheit.",
+      "invalidTime": "Bitte eine gültige Uhrzeit wählen.",
+      "guestsRange": "Für Gruppen über 12 Personen rufen Sie uns bitte an."
+    }
+  },
+  "contact": {
+    "title": "Kontakt",
+    "intro": "Fragen, Feedback oder eine Feier planen? Schreiben Sie uns.",
+    "form": {
+      "name": "Name",
+      "email": "E-Mail",
+      "message": "Nachricht",
+      "submit": "Nachricht senden",
+      "success": "Danke für Ihre Nachricht! Wir antworten so bald wie möglich.",
+      "genericError": "Das hat leider nicht geklappt. Bitte versuchen Sie es erneut."
+    },
+    "errors": {
+      "required": "Bitte ausfüllen.",
+      "tooShort": "Bitte etwas ausführlicher.",
+      "tooLong": "Bitte kürzer fassen.",
+      "invalidEmail": "Bitte eine gültige E-Mail-Adresse angeben."
+    },
+    "details": {
+      "address": "Adresse",
+      "phone": "Telefon",
+      "email": "E-Mail",
+      "hours": "Öffnungszeiten"
+    }
+  },
+  "footer": {
+    "tagline": "Saisonale Küche im Herzen der Stadt.",
+    "rights": "Alle Rechte vorbehalten.",
+    "imprint": "Impressum",
+    "privacy": "Datenschutz"
+  },
+  "notFound": {
+    "title": "Seite nicht gefunden",
+    "description": "Diese Seite gibt es nicht – oder nicht mehr.",
+    "backHome": "Zur Startseite"
+  },
+  "admin": {
+    "title": "Verwaltung",
+    "comingSoon": "Der Verwaltungsbereich wird gerade eingerichtet."
+  }
+}

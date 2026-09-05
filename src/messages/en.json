@@ -1,0 +1,108 @@
+{
+  "meta": {
+    "title": "Grüne Gurke · Restaurant",
+    "description": "Seasonal cooking, honest ingredients and a table worth lingering at. Reserve your table at Grüne Gurke."
+  },
+  "nav": {
+    "home": "Home",
+    "menu": "Menu",
+    "gallery": "Gallery",
+    "contact": "Contact",
+    "reserve": "Reserve a table",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
+  },
+  "common": {
+    "language": "Language",
+    "loading": "Sending …",
+    "submit": "Submit",
+    "required": "Required",
+    "optional": "optional"
+  },
+  "home": {
+    "eyebrow": "Restaurant · Berlin",
+    "title": "Grüne Gurke",
+    "subtitle": "Seasonal cooking, honest ingredients and a table worth lingering at.",
+    "ctaReserve": "Reserve a table",
+    "ctaMenu": "See the menu",
+    "hoursTitle": "Opening hours",
+    "addressTitle": "Address"
+  },
+  "menu": {
+    "title": "Menu",
+    "intro": "Our menu follows the seasons. The current selection is coming soon.",
+    "comingSoon": "The menu is being prepared."
+  },
+  "gallery": {
+    "title": "Gallery",
+    "intro": "A look at the kitchen, the room and the plates.",
+    "comingSoon": "Photos coming shortly."
+  },
+  "reservations": {
+    "title": "Reserve a table",
+    "intro": "Send us your request and we will confirm it by email as soon as possible.",
+    "form": {
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "date": "Date",
+      "time": "Time",
+      "guests": "Guests",
+      "message": "Notes",
+      "messagePlaceholder": "Allergies, occasion, high chair …",
+      "submit": "Send request",
+      "success": "Thank you! We have received your request and will confirm by email shortly.",
+      "genericError": "Something went wrong. Please try again or give us a call."
+    },
+    "errors": {
+      "required": "Please fill this in.",
+      "tooShort": "A little more, please.",
+      "tooLong": "Please keep it shorter.",
+      "invalidEmail": "Please enter a valid email address.",
+      "invalidPhone": "Please enter a valid phone number.",
+      "invalidDate": "Please choose a valid date.",
+      "pastDate": "That date is in the past.",
+      "invalidTime": "Please choose a valid time.",
+      "guestsRange": "For groups larger than 12, please call us."
+    }
+  },
+  "contact": {
+    "title": "Contact",
+    "intro": "Questions, feedback or planning a celebration? Write to us.",
+    "form": {
+      "name": "Name",
+      "email": "Email",
+      "message": "Message",
+      "submit": "Send message",
+      "success": "Thanks for your message! We will reply as soon as we can.",
+      "genericError": "Something went wrong. Please try again."
+    },
+    "errors": {
+      "required": "Please fill this in.",
+      "tooShort": "A little more, please.",
+      "tooLong": "Please keep it shorter.",
+      "invalidEmail": "Please enter a valid email address."
+    },
+    "details": {
+      "address": "Address",
+      "phone": "Phone",
+      "email": "Email",
+      "hours": "Opening hours"
+    }
+  },
+  "footer": {
+    "tagline": "Seasonal cooking in the heart of the city.",
+    "rights": "All rights reserved.",
+    "imprint": "Imprint",
+    "privacy": "Privacy"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "This page does not exist, or not anymore.",
+    "backHome": "Back to home"
+  },
+  "admin": {
+    "title": "Admin",
+    "comingSoon": "The admin area is being set up."
+  }
+}

@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   Grüne Gurke — design tokens
+   Palette: deep forest greens, warm cream, a restrained gold accent.
+   Fonts are loaded via next/font in the root layout and exposed as CSS vars.
+   --------------------------------------------------------------------------- */
+
+@theme {
+  /* brand scales */
+  --color-cream-50: #fbf9f4;
+  --color-cream-100: #f5f1e8;
+  --color-cream-200: #eae3d3;
+  --color-cream-300: #d9cfb8;
+
+  --color-forest-950: #0d1a13;
+  --color-forest-900: #14261c;
+  --color-forest-800: #1d3728;
+  --color-forest-700: #284a37;
+  --color-forest-600: #365f47;
+
+  --color-sage-500: #7c9a7e;
+  --color-sage-300: #b7c9b4;
+  --color-sage-100: #e3ebe0;
+
+  --color-gold-600: #a8863f;
+  --color-gold-500: #c2a15a;
+  --color-gold-400: #d4b877;
+
+  --color-ink-900: #1a1a17;
+  --color-ink-700: #3a3a35;
+  --color-ink-500: #6b6a62;
+  --color-ink-400: #8b8a82;
+
+  /* semantic */
+  --color-background: var(--color-cream-50);
+  --color-foreground: var(--color-ink-900);
+  --color-muted: var(--color-ink-500);
+  --color-surface: #ffffff;
+  --color-border: var(--color-cream-200);
+  --color-primary: var(--color-forest-800);
+  --color-primary-foreground: var(--color-cream-50);
+  --color-accent: var(--color-gold-500);
+
+  /* type */
+  --font-display: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  --font-sans: var(--font-manrope), "Manrope", ui-sans-serif, system-ui, sans-serif;
+
+  /* motion */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--color-forest-800);
+    color: var(--color-cream-50);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-gold-500);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@utility container-site {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 80rem;
+  padding-inline: 1.25rem;
+  @media (width >= 40rem) {
+    padding-inline: 2rem;
+  }
+  @media (width >= 64rem) {
+    padding-inline: 3rem;
+  }
+}
