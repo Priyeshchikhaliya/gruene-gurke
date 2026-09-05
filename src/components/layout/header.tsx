@@ -9,12 +9,15 @@ import { MobileNav } from "./mobile-nav";
 export async function Header() {
   const settings = await getSettings();
   return (
-    <header className="sticky top-0 z-50 border-b border-border/70 bg-cream-50/90 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-border/70 bg-cream-50">
       {/* Schmale Leiste: online reservieren steht vorn, die Nummer bleibt
           für Bestellungen erreichbar. */}
       <div className="bg-forest-800 text-cream-50">
         <p className="container-site flex flex-wrap items-center justify-center gap-x-3 gap-y-1 py-2 text-center text-[11px] tracking-wide sm:text-xs">
-          <Link href={routes.reservation} className="font-medium underline underline-offset-2 hover:text-gold-400">
+          <Link
+            href={routes.reservation}
+            className="-my-1 py-1 font-medium underline underline-offset-2 hover:text-gold-400"
+          >
             Tisch online reservieren
           </Link>
           <span aria-hidden="true" className="hidden text-cream-200/40 sm:inline">
@@ -22,7 +25,7 @@ export async function Header() {
           </span>
           <span className="text-cream-100/75">
             {settings.banner_text}{" "}
-            <a href={siteConfig.phone.href} className="underline underline-offset-2 hover:text-gold-400">
+            <a href={siteConfig.phone.href} className="-my-1 py-1 underline underline-offset-2 hover:text-gold-400">
               {siteConfig.phone.display}
             </a>
           </span>

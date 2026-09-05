@@ -7,8 +7,6 @@ import { routes } from "@/lib/routes";
 
 export type AdminState = { ok?: boolean; message?: string; error?: string };
 
-export const emptyState: AdminState = {};
-
 /** Prüft die Berechtigung und liefert den an die Sitzung gebundenen Client. */
 export async function adminClient() {
   await requireAdmin();

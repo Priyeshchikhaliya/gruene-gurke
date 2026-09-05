@@ -22,8 +22,10 @@ Zod 4, `motion`. Deployment auf Vercel. Paketmanager: npm.
 - Secrets über `serverEnv()` in `src/lib/env.ts`; neue Variablen dort und in `.env.example`.
 - Styling über die Tokens in `src/app/globals.css` (`forest-*`, `cream-*`, `sage-*`, `gold-*`,
   `font-display`, `font-sans`, `container-site`). Keine rohen Hex-Werte in Komponenten.
-- Einblendungen mit `<FadeIn>` (CSS-Klasse `.reveal`), nie mit Inline-Styles aus Motion –
-  sonst gibt es Hydration-Konflikte.
+- Einblendungen mit `<FadeIn>` (CSS-Klasse `.reveal`), nie mit Inline-Styles einer
+  Animationsbibliothek – sonst gibt es Hydration-Konflikte.
+- Kein `backdrop-filter` auf Elementen, die etwas mit `position: fixed` enthalten. Der Filter
+  macht sie zum Bezugsrahmen, und das Overlay wird nur so groß wie das Elternelement.
 - Inhalte der Website immer über `src/lib/data/content.ts` lesen. Diese Funktionen fallen
   auf die Dateien in `src/lib` zurück, wenn Supabase fehlt – die Seite darf nie leer sein.
 - Der Verwaltungsbereich liegt unter `src/app/admin/(geschuetzt)`, ist `force-dynamic` und

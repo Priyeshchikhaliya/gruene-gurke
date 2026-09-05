@@ -57,6 +57,3 @@ export const galleryImages: GalleryImage[] = [
   { src: "/images/catering/catering-30.jpg", width: 1200, height: 900, category: "catering",
     alt: "Rinderroulade mit Salzkartoffeln und Apfelrotkohl" },
 ];
-
-export const galleryByCategory = (category: GalleryCategory) =>
-  galleryImages.filter((img) => img.category === category);

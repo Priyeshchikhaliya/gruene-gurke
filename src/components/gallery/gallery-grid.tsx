@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -65,63 +64,54 @@ export function GalleryGrid({
         ))}
       </ul>
 
-      <AnimatePresence>
-        {current && index !== null ? (
-          <motion.div
-            role="dialog"
-            aria-modal="true"
-            aria-label={current.alt}
-            className="fixed inset-0 z-100 flex items-center justify-center bg-forest-950/95 p-3 text-cream-50 sm:p-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
+      {current && index !== null ? (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label={current.alt}
+          className="lightbox fixed inset-0 z-100 flex items-center justify-center bg-forest-950/95 p-3 text-cream-50 sm:p-6"
+          onClick={close}
+        >
+          <button
+            type="button"
             onClick={close}
+            aria-label="Schließen"
+            className="absolute right-3 top-3 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-cream-50/10 transition-colors hover:bg-cream-50/20 sm:right-4 sm:top-4"
           >
-            <button
-              type="button"
-              onClick={close}
-              aria-label="Schließen"
-              className="absolute right-3 top-3 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-cream-50/10 hover:bg-cream-50/20 sm:right-4 sm:top-4"
-            >
-              <X className="h-5 w-5" />
-            </button>
-            <button
-              type="button"
-              onClick={(e) => { e.stopPropagation(); step(-1); }}
-              aria-label="Vorheriges Bild"
-              className="absolute left-2 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-cream-50/10 hover:bg-cream-50/20 md:left-6"
-            >
-              <ChevronLeft className="h-6 w-6" />
-            </button>
-            <button
-              type="button"
-              onClick={(e) => { e.stopPropagation(); step(1); }}
-              aria-label="Nächstes Bild"
-              className="absolute right-2 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-cream-50/10 hover:bg-cream-50/20 md:right-6"
-            >
-              <ChevronRight className="h-6 w-6" />
-            </button>
+            <X className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); step(-1); }}
+            aria-label="Vorheriges Bild"
+            className="absolute left-2 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-cream-50/10 transition-colors hover:bg-cream-50/20 md:left-6"
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </button>
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); step(1); }}
+            aria-label="Nächstes Bild"
+            className="absolute right-2 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-cream-50/10 transition-colors hover:bg-cream-50/20 md:right-6"
+          >
+            <ChevronRight className="h-6 w-6" />
+          </button>
 
-            <motion.figure
-              key={current.src}
-              initial={{ opacity: 0, scale: 0.98 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              className="relative flex max-h-full w-full max-w-6xl flex-col items-center"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="relative h-[60vh] w-full sm:h-[72vh]">
-                <Image src={current.src} alt={current.alt} fill sizes="100vw" className="object-contain" priority />
-              </div>
-              <figcaption className="mt-4 flex flex-col items-center gap-1 px-10 text-center text-sm text-cream-200/80 sm:flex-row sm:gap-4">
-                <span>{current.alt}</span>
-                <span className="tabular-nums text-cream-200/50">Bild {index + 1} von {images.length}</span>
-              </figcaption>
-            </motion.figure>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
+          <figure
+            key={current.src}
+            className="lightbox-figure relative flex max-h-full w-full max-w-6xl flex-col items-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="relative h-[60vh] w-full sm:h-[72vh]">
+              <Image src={current.src} alt={current.alt} fill sizes="100vw" className="object-contain" priority />
+            </div>
+            <figcaption className="mt-4 flex flex-col items-center gap-1 px-10 text-center text-sm text-cream-200/80 sm:flex-row sm:gap-4">
+              <span>{current.alt}</span>
+              <span className="tabular-nums text-cream-200/50">Bild {index + 1} von {images.length}</span>
+            </figcaption>
+          </figure>
+        </div>
+      ) : null}
     </>
   );
 }

@@ -26,7 +26,7 @@ export function MenuSections({
       {/* Kategorien: waagerechte Pillen auf kleinen Schirmen, feste Spalte ab xl */}
       <nav
         aria-label="Kategorien der Speisekarte"
-        className="sticky top-24 z-30 -mx-5 mb-8 overflow-x-auto bg-cream-50/95 px-5 py-3 backdrop-blur-md sm:-mx-8 sm:top-28 sm:px-8 lg:-mx-12 lg:px-12 xl:static xl:m-0 xl:overflow-visible xl:bg-transparent xl:p-0 xl:backdrop-blur-none"
+        className="sticky top-24 z-30 -mx-5 mb-8 overflow-x-auto border-b border-border/60 bg-cream-50 px-5 py-3 sm:-mx-8 sm:top-28 sm:px-8 lg:-mx-12 lg:px-12 xl:static xl:m-0 xl:overflow-visible xl:border-0 xl:bg-transparent xl:p-0"
       >
         <div className="xl:sticky xl:top-32">
           <p className="mb-3 hidden text-xs font-medium uppercase tracking-[0.2em] text-forest-700 xl:block">
@@ -37,7 +37,7 @@ export function MenuSections({
               <li key={cat.id} className="shrink-0">
                 <a
                   href={`#${cat.id}`}
-                  className="block whitespace-nowrap rounded-full border border-border bg-surface px-4 py-2 text-sm text-ink-700 transition-colors hover:border-forest-800 hover:text-forest-900 xl:whitespace-normal xl:rounded-none xl:border-0 xl:border-l-2 xl:border-l-transparent xl:bg-transparent xl:px-4 xl:py-1.5 xl:hover:border-l-forest-800"
+                  className="block whitespace-nowrap rounded-full border border-border bg-surface px-4 py-2.5 text-sm text-ink-700 transition-colors hover:border-forest-800 hover:text-forest-900 xl:whitespace-normal xl:rounded-none xl:border-0 xl:border-l-2 xl:border-l-transparent xl:bg-transparent xl:px-4 xl:py-1.5 xl:hover:border-l-forest-800"
                 >
                   {cat.title}
                 </a>

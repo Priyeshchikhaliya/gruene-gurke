@@ -10,7 +10,7 @@ und Tischreservierung.
 | ---------------- | ------------------------------------------------ |
 | Framework        | Next.js 16 (App Router, Server Actions), TypeScript |
 | Styling          | Tailwind CSS v4, Design-Tokens in `globals.css`  |
-| Animation        | `motion` plus CSS-Reveal                          |
+| Animation        | CSS-Übergänge, keine Bibliothek                   |
 | Datenbank & Auth | Supabase (Postgres + RLS, Auth, Storage)          |
 | E-Mail           | Resend                                            |
 | Validierung      | Zod 4                                             |

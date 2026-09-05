@@ -33,13 +33,6 @@ export const seasons: Season[] = [
   },
 ];
 
-export function currentSeason(date = new Date()): Season {
-  const month = Number(
-    new Intl.DateTimeFormat("en-US", { timeZone: "Europe/Berlin", month: "numeric" }).format(date),
-  );
-  return month >= 5 && month <= 10 ? seasons[0] : seasons[1];
-}
-
 /** schema.org OpeningHoursSpecification for the whole year (restaurant hours are identical). */
 export const openingHoursSpecification = [
   {

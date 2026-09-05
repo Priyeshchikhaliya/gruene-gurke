@@ -13,5 +13,3 @@ export type FormState<Field extends string = string> = {
    */
   values?: Partial<Record<Field, string>>;
 };
-
-export const idleState: FormState = { status: "idle" };

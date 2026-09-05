@@ -124,7 +124,6 @@
   transition:
     opacity 0.9s var(--ease-out-expo),
     transform 0.9s var(--ease-out-expo);
-  will-change: opacity, transform;
 }
 
 .reveal.is-visible {
@@ -137,5 +136,34 @@
     opacity: 1;
     transform: none;
     transition: none;
+  }
+}
+
+/* Bildansicht der Galerie: Einblenden ohne Animationsbibliothek. */
+@keyframes lightbox-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes lightbox-rise {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+
+.lightbox {
+  animation: lightbox-fade 0.25s ease-out;
+}
+
+.lightbox-figure {
+  animation: lightbox-rise 0.3s var(--ease-out-expo);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lightbox,
+  .lightbox-figure {
+    animation: none;
   }
 }
