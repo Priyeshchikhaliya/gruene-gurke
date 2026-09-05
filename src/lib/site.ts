@@ -2,13 +2,32 @@
  * Static site facts from the current website and the 2025 menu.
  * Opening hours live in `hours.ts`, menu in `menu.ts`, photos in `gallery.ts`.
  */
+/**
+ * Öffentliche Adresse der Website. Sie steckt in den Kanonical-Links, in der
+ * Sitemap, in robots.txt, in den strukturierten Daten und im Link zum Setzen
+ * des Verwaltungspassworts.
+ *
+ * Reihenfolge: eigene Angabe, sonst die Produktionsadresse von Vercel, sonst
+ * die lokale Entwicklung. Ohne diese Rückfallebene würden nach einem
+ * vergessenen Eintrag sämtliche Adressen auf localhost zeigen.
+ */
+function resolveSiteUrl() {
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (explicit) return explicit.replace(/\/$/, "");
+
+  const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim();
+  if (vercel) return `https://${vercel}`;
+
+  return "http://localhost:3000";
+}
+
 export const siteConfig = {
   name: "Grüne Gurke",
   slogan: "…da schmeckt's!",
   legalName: "GastRoland UG (haftungsbeschränkt)",
   altName: "Gaststätte Harzblick",
   owner: "Bernd Roland",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  url: resolveSiteUrl(),
   address: {
     street: "Veckenstedter Weg 63",
     postalCode: "38855",

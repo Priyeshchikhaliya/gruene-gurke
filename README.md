@@ -113,6 +113,22 @@ supabase/
 - **Öffentliche Seiten** sind statisch und werden alle zehn Minuten sowie nach jedem
   Speichern im Verwaltungsbereich neu erzeugt.
 
+## Deployment auf Vercel
+
+1. Repository in Vercel importieren. Als Region **Frankfurt (fra1)** wählen – die
+   Datenschutzerklärung nennt eine Auslieferung aus der EU.
+2. Umgebungsvariablen setzen (dieselben Schlüssel wie in `.env.example`):
+   `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
+   `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY`, `RESEND_FROM_EMAIL`,
+   `RESTAURANT_INBOX_EMAIL`.
+3. In Supabase unter **Authentication → URL Configuration** die Produktionsadresse als
+   Site URL eintragen und `https://<domain>/admin/passwort` zu den Redirect URLs
+   hinzufügen. Sonst führt der Link zum Setzen des Passworts ins Leere.
+4. Vor der Übergabe `supabase/testdaten-loeschen.sql` ausführen.
+
+Fehlt `NEXT_PUBLIC_SITE_URL`, greift die Produktionsadresse von Vercel. Kanonische
+Links, Sitemap und robots.txt zeigen dann trotzdem nicht auf localhost.
+
 ## Offene Punkte
 
 - Bilder in besserer Auflösung vom Betreiber; aktuell die Dateien der bisherigen Website.
