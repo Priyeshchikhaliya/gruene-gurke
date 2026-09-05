@@ -6,15 +6,24 @@ import { sendContactEmail } from "@/lib/email/resend";
 import { isSupabaseConfigured } from "@/lib/env";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { FormState } from "./types";
-import { firstFieldErrors, isHoneypotTripped, submittedValues } from "./utils";
+import { firstFieldErrors, isHoneypotTripped, isPhone, submittedValues } from "./utils";
 
 const schema = z.object({
   anrede: z.enum(anredeOptions, "Bitte wählen Sie eine Anrede."),
-  vorname: z.string().trim().min(2, "Bitte ausfüllen.").max(80, "Bitte kürzer fassen."),
-  name: z.string().trim().min(2, "Bitte ausfüllen.").max(80, "Bitte kürzer fassen."),
-  telefon: z.string().trim().min(6, "Bitte eine gültige Telefonnummer angeben.").max(30, "Bitte eine gültige Telefonnummer angeben."),
-  email: z.email("Bitte eine gültige E-Mail-Adresse angeben.").max(120, "Bitte kürzer fassen."),
-  message: z.string().trim().min(10, "Bitte etwas ausführlicher.").max(2000, "Bitte kürzer fassen."),
+  vorname: z.string().trim().min(2, "Bitte den Vornamen angeben.").max(80, "Bitte kürzer fassen, höchstens 80 Zeichen."),
+  name: z.string().trim().min(2, "Bitte den Namen angeben.").max(80, "Bitte kürzer fassen, höchstens 80 Zeichen."),
+  telefon: z
+    .string()
+    .trim()
+    .min(6, "Bitte eine gültige Telefonnummer angeben.")
+    .max(30, "Bitte eine gültige Telefonnummer angeben.")
+    .refine(isPhone, "Bitte eine gültige Telefonnummer angeben, zum Beispiel 03943 634256."),
+  email: z.email("Bitte eine gültige E-Mail-Adresse angeben.").max(120, "Bitte kürzer fassen, höchstens 120 Zeichen."),
+  message: z
+    .string()
+    .trim()
+    .min(10, "Bitte etwas ausführlicher, mindestens 10 Zeichen.")
+    .max(2000, "Bitte kürzer fassen, höchstens 2000 Zeichen."),
   consent: z.literal("on", "Bitte stimmen Sie der Speicherung Ihrer Angaben zu."),
 });
 

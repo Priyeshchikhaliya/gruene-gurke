@@ -156,7 +156,7 @@ export function ReservationCalendar({
                       isSelected ? "text-cream-50" : active.length ? "text-forest-900" : "text-ink-400 line-through",
                     )}
                   >
-                    {active.length > 0 ? `${active.length} × · ${guests} P.` : `${list.length} abgesagt`}
+                    {active.length > 0 ? `${active.length} × · ${guests} P.` : `${list.length} ×`}
                   </span>
                   {open > 0 ? (
                     <span

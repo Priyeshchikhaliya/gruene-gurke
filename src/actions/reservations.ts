@@ -7,13 +7,18 @@ import { getSeasons } from "@/lib/data/content";
 import { checkReservationTime, latestReservationDate } from "@/lib/opening";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { FormState } from "./types";
-import { firstFieldErrors, isHoneypotTripped, submittedValues, todayInBerlin } from "./utils";
+import { firstFieldErrors, isHoneypotTripped, isPhone, submittedValues, todayInBerlin } from "./utils";
 
 const schema = z
   .object({
-    name: z.string().trim().min(2, "Bitte ausfüllen.").max(80, "Bitte kürzer fassen."),
-    email: z.email("Bitte eine gültige E-Mail-Adresse angeben.").max(120, "Bitte kürzer fassen."),
-    phone: z.string().trim().min(6, "Bitte eine gültige Telefonnummer angeben.").max(30, "Bitte eine gültige Telefonnummer angeben."),
+    name: z.string().trim().min(2, "Bitte den Namen angeben.").max(80, "Bitte kürzer fassen, höchstens 80 Zeichen."),
+    email: z.email("Bitte eine gültige E-Mail-Adresse angeben.").max(120, "Bitte kürzer fassen, höchstens 120 Zeichen."),
+    phone: z
+      .string()
+      .trim()
+      .min(6, "Bitte eine gültige Telefonnummer angeben.")
+      .max(30, "Bitte eine gültige Telefonnummer angeben.")
+      .refine(isPhone, "Bitte eine gültige Telefonnummer angeben, zum Beispiel 03943 634256."),
     guests: z.coerce
       .number({ error: "Bitte die Anzahl der Personen angeben." })
       .int("Bitte eine ganze Zahl angeben.")
@@ -21,7 +26,7 @@ const schema = z
       .max(50, "Für mehr als 50 Personen sprechen wir das gern persönlich ab. Rufen Sie uns bitte an."),
     date: z.iso.date("Bitte ein gültiges Datum wählen."),
     time: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Bitte eine gültige Uhrzeit wählen."),
-    message: z.string().trim().max(1000, "Bitte kürzer fassen.").optional(),
+    message: z.string().trim().max(1000, "Bitte kürzer fassen, höchstens 1000 Zeichen.").optional(),
     consent: z.literal("on", "Bitte stimmen Sie der Speicherung Ihrer Angaben zu."),
   })
   .refine((v) => v.date >= todayInBerlin(), { error: "Das Datum liegt in der Vergangenheit.", path: ["date"] });

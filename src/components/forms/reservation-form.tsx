@@ -48,19 +48,19 @@ export function ReservationForm({ seasons }: { seasons: OpeningSeasonInfo[] }) {
 
       <div className="sm:col-span-2">
         <Label htmlFor="name" required>Name</Label>
-        <Input id="name" name="name" autoComplete="name" defaultValue={value("name")} required aria-invalid={!!err("name")} aria-describedby="name-error" />
+        <Input id="name" name="name" autoComplete="name" defaultValue={value("name")} minLength={2} maxLength={80} required aria-invalid={!!err("name")} aria-describedby="name-error" />
         <FieldError id="name-error" message={err("name")} />
       </div>
 
       <div>
         <Label htmlFor="email" required>E-Mail</Label>
-        <Input id="email" name="email" type="email" autoComplete="email" defaultValue={value("email")} required aria-invalid={!!err("email")} aria-describedby="email-error" />
+        <Input id="email" name="email" type="email" inputMode="email" autoComplete="email" defaultValue={value("email")} maxLength={120} required aria-invalid={!!err("email")} aria-describedby="email-error" />
         <FieldError id="email-error" message={err("email")} />
       </div>
 
       <div>
         <Label htmlFor="phone" required>Telefon</Label>
-        <Input id="phone" name="phone" type="tel" autoComplete="tel" defaultValue={value("phone")} required aria-invalid={!!err("phone")} aria-describedby="phone-error" />
+        <Input id="phone" name="phone" type="tel" inputMode="tel" autoComplete="tel" defaultValue={value("phone")} minLength={6} maxLength={30} placeholder="03943 634256" required aria-invalid={!!err("phone")} aria-describedby="phone-error" />
         <FieldError id="phone-error" message={err("phone")} />
       </div>
 
@@ -149,6 +149,7 @@ export function ReservationForm({ seasons }: { seasons: OpeningSeasonInfo[] }) {
           id="message"
           name="message"
           defaultValue={value("message")}
+          maxLength={1000}
           placeholder="Anlass, Kinderstuhl, Sitzplatz auf der Terrasse, Allergien …"
           aria-invalid={!!err("message")}
           aria-describedby="message-error"

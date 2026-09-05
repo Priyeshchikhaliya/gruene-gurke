@@ -36,3 +36,14 @@ export function submittedValues<T extends string>(formData: FormData, fields: re
   }
   return values;
 }
+
+/**
+ * Telefonnummern: Ziffern, dazu die üblichen Trennzeichen. Mindestens sechs
+ * Ziffern, damit "12345" oder reine Zeichenfolgen nicht durchgehen.
+ */
+export const PHONE_PATTERN = /^[0-9+()\/\-.\s]{6,30}$/;
+
+export function isPhone(value: string) {
+  if (!PHONE_PATTERN.test(value)) return false;
+  return (value.match(/\d/g)?.length ?? 0) >= 6;
+}

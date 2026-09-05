@@ -56,12 +56,12 @@ export function ContactForm() {
       <div className="grid gap-5 sm:grid-cols-2 sm:gap-6">
         <div>
           <Label htmlFor="vorname" required>Vorname</Label>
-          <Input id="vorname" name="vorname" autoComplete="given-name" defaultValue={value("vorname")} required aria-invalid={!!err("vorname")} aria-describedby="vorname-error" />
+          <Input id="vorname" name="vorname" autoComplete="given-name" defaultValue={value("vorname")} minLength={2} maxLength={80} required aria-invalid={!!err("vorname")} aria-describedby="vorname-error" />
           <FieldError id="vorname-error" message={err("vorname")} />
         </div>
         <div>
           <Label htmlFor="name" required>Name</Label>
-          <Input id="name" name="name" autoComplete="family-name" defaultValue={value("name")} required aria-invalid={!!err("name")} aria-describedby="name-error" />
+          <Input id="name" name="name" autoComplete="family-name" defaultValue={value("name")} minLength={2} maxLength={80} required aria-invalid={!!err("name")} aria-describedby="name-error" />
           <FieldError id="name-error" message={err("name")} />
         </div>
       </div>
@@ -69,19 +69,19 @@ export function ContactForm() {
       <div className="grid gap-5 sm:grid-cols-2 sm:gap-6">
         <div>
           <Label htmlFor="telefon" required>Telefon</Label>
-          <Input id="telefon" name="telefon" type="tel" autoComplete="tel" defaultValue={value("telefon")} required aria-invalid={!!err("telefon")} aria-describedby="telefon-error" />
+          <Input id="telefon" name="telefon" type="tel" inputMode="tel" autoComplete="tel" defaultValue={value("telefon")} minLength={6} maxLength={30} placeholder="03943 634256" required aria-invalid={!!err("telefon")} aria-describedby="telefon-error" />
           <FieldError id="telefon-error" message={err("telefon")} />
         </div>
         <div>
           <Label htmlFor="email" required>E-Mail</Label>
-          <Input id="email" name="email" type="email" autoComplete="email" defaultValue={value("email")} required aria-invalid={!!err("email")} aria-describedby="email-error" />
+          <Input id="email" name="email" type="email" inputMode="email" autoComplete="email" defaultValue={value("email")} maxLength={120} required aria-invalid={!!err("email")} aria-describedby="email-error" />
           <FieldError id="email-error" message={err("email")} />
         </div>
       </div>
 
       <div>
         <Label htmlFor="message" required>Ihre Nachricht</Label>
-        <Textarea id="message" name="message" defaultValue={value("message")} required aria-invalid={!!err("message")} aria-describedby="message-error" />
+        <Textarea id="message" name="message" defaultValue={value("message")} minLength={10} maxLength={2000} required aria-invalid={!!err("message")} aria-describedby="message-error" />
         <FieldError id="message-error" message={err("message")} />
       </div>
 
