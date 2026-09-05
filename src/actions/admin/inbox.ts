@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { sendReservationDecision } from "@/lib/email/resend";
 import { adminClient, fail, ok, optionalText, text, type AdminState } from "./helpers";
 
 const STATUS = ["offen", "bestaetigt", "abgesagt"] as const;
@@ -11,8 +12,26 @@ export async function updateReservation(_prev: AdminState, formData: FormData): 
   const status = text(formData, "status") as Status;
   if (!STATUS.includes(status)) return fail("Unbekannter Status.");
 
+  const notifyGuest = formData.get("notify") === "on";
+  let reservation: {
+    name: string;
+    email: string;
+    reserved_date: string;
+    reserved_time: string;
+    guests: number;
+    status: Status;
+  } | null = null;
+
   try {
     const supabase = await adminClient();
+
+    const { data: current } = await supabase
+      .from("reservations")
+      .select("name, email, reserved_date, reserved_time, guests, status")
+      .eq("id", id)
+      .maybeSingle();
+    reservation = current;
+
     const { error } = await supabase
       .from("reservations")
       .update({ status, internal_note: optionalText(formData, "internal_note") })
@@ -25,7 +44,30 @@ export async function updateReservation(_prev: AdminState, formData: FormData): 
 
   revalidatePath("/admin/reservierungen");
   revalidatePath("/admin");
-  return ok("Reservierung aktualisiert.");
+
+  // Nur bei einer echten Entscheidung schreiben, und nur einmal.
+  const decided = status === "bestaetigt" || status === "abgesagt";
+  const changed = reservation !== null && reservation.status !== status;
+
+  if (!notifyGuest || !decided || !changed || !reservation) {
+    return ok("Reservierung aktualisiert.");
+  }
+
+  try {
+    await sendReservationDecision({
+      status,
+      name: reservation.name,
+      email: reservation.email,
+      date: reservation.reserved_date,
+      time: reservation.reserved_time,
+      guests: reservation.guests,
+    });
+  } catch (error) {
+    console.error("[verwaltung] Antwort an den Gast", error);
+    return ok("Gespeichert, aber die E-Mail an den Gast ging nicht raus. Bitte telefonisch melden.");
+  }
+
+  return ok(status === "bestaetigt" ? "Bestätigt und dem Gast geschrieben." : "Abgesagt und dem Gast geschrieben.");
 }
 
 export async function deleteReservation(_prev: AdminState, formData: FormData): Promise<AdminState> {

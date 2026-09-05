@@ -103,6 +103,11 @@ supabase/
 - **Reservierung und Kontakt**: Formular → Server Action → Zod-Prüfung → Insert mit dem
   Service-Role-Client → Resend-Benachrichtigung. Der Anon-Key darf nicht schreiben, das
   öffentliche API taugt also nicht zum Spammen.
+- **Antwort an den Gast**: Wird eine Reservierung im Verwaltungsbereich auf „Bestätigt“ oder
+  „Abgesagt“ gestellt, geht automatisch eine E-Mail an den Gast. Das lässt sich pro Vorgang
+  abwählen, und ein erneutes Speichern verschickt nichts doppelt.
+- **Ohne Resend-Schlüssel** wird nichts versendet; die Anfragen landen trotzdem in der
+  Datenbank und im Verwaltungsbereich.
 - **Inhalte** (Karte, Zeiten, Galerie, Jobs, Texte) kommen aus Supabase. Schlägt eine
   Abfrage fehl oder fehlen die Zugangsdaten, greifen die Inhalte aus `src/lib`.
 - **Öffentliche Seiten** sind statisch und werden alle zehn Minuten sowie nach jedem

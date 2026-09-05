@@ -79,6 +79,74 @@ export async function sendReservationEmails(input: ReservationEmailInput) {
   ]);
 }
 
+const dateFormat = new Intl.DateTimeFormat("de-DE", {
+  weekday: "long",
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+  timeZone: "Europe/Berlin",
+});
+
+/** Datum aus der Datenbank (2026-09-06) als "Sonntag, 6. September 2026". */
+function formatDate(isoDate: string) {
+  const parsed = new Date(`${isoDate}T12:00:00`);
+  return Number.isNaN(parsed.getTime()) ? isoDate : dateFormat.format(parsed);
+}
+
+export type ReservationDecisionInput = {
+  status: "bestaetigt" | "abgesagt";
+  name: string;
+  email: string;
+  date: string;
+  time: string;
+  guests: number;
+};
+
+/**
+ * Antwort an den Gast, wenn die Reservierung im Verwaltungsbereich bestätigt
+ * oder abgesagt wird.
+ */
+export async function sendReservationDecision(input: ReservationDecisionInput) {
+  const config = resendConfig();
+  if (!config) {
+    console.warn("[e-mail] Resend ist nicht eingerichtet, es wurde nichts versendet.");
+    return false;
+  }
+
+  const resend = new Resend(config.apiKey);
+  const confirmed = input.status === "bestaetigt";
+
+  const details = rows([
+    ["Datum", formatDate(input.date)],
+    ["Uhrzeit", `${input.time.slice(0, 5)} Uhr`],
+    ["Personen", String(input.guests)],
+  ]);
+
+  const intro = confirmed
+    ? `<p style="margin:0 0 16px;line-height:1.6">Guten Tag ${escapeHtml(input.name)},<br>wir haben Ihren Tisch reserviert und freuen uns auf Ihren Besuch.</p>`
+    : `<p style="margin:0 0 16px;line-height:1.6">Guten Tag ${escapeHtml(input.name)},<br>leider können wir Ihre Reservierungsanfrage nicht bestätigen. Bitte rufen Sie uns an, wir finden gern einen anderen Termin.</p>`;
+
+  const outro = confirmed
+    ? `<p style="margin:16px 0 0;line-height:1.6">Sollten Sie den Termin nicht wahrnehmen können, geben Sie uns bitte kurz telefonisch Bescheid unter ${escapeHtml(siteConfig.phone.display)}.</p>`
+    : `<p style="margin:16px 0 0;line-height:1.6">Sie erreichen uns unter ${escapeHtml(siteConfig.phone.display)}.</p>`;
+
+  const { error } = await resend.emails.send({
+    from: config.from,
+    to: input.email,
+    replyTo: config.inbox,
+    subject: confirmed
+      ? `Ihre Reservierung am ${formatDate(input.date)} ist bestätigt`
+      : `Ihre Reservierungsanfrage am ${formatDate(input.date)}`,
+    html: shell(
+      confirmed ? "Ihre Reservierung ist bestätigt" : "Ihre Reservierungsanfrage",
+      `${intro}<table style="border-collapse:collapse">${details}</table>${outro}`,
+    ),
+  });
+
+  if (error) throw new Error(error.message);
+  return true;
+}
+
 export type ContactEmailInput = {
   name: string;
   email: string;

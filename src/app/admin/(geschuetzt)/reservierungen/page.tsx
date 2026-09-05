@@ -3,7 +3,7 @@ import { Mail, Phone } from "lucide-react";
 import { deleteReservation, updateReservation } from "@/actions/admin/inbox";
 import { ActionForm, ConfirmDeleteButton } from "@/components/admin/action-form";
 import { AdminHeading, Card, EmptyHint, Row } from "@/components/admin/ui";
-import { Label, Select, Textarea } from "@/components/ui/field";
+import { Checkbox, Label, Select, Textarea } from "@/components/ui/field";
 import { adminReservations } from "@/lib/data/admin";
 import { cn } from "@/lib/utils";
 
@@ -84,6 +84,9 @@ export default async function ReservationsPage() {
                 />
               </div>
             </div>
+            <Checkbox id={`notify-${reservation.id}`} name="notify" defaultChecked>
+              Gast per E-Mail benachrichtigen, sobald ich auf „Bestätigt“ oder „Abgesagt“ stelle
+            </Checkbox>
           </ActionForm>
 
           <div className="mt-4 border-t border-border pt-4">
@@ -98,7 +101,7 @@ export default async function ReservationsPage() {
     <>
       <AdminHeading
         title="Reservierungen"
-        description="Anfragen aus dem Formular auf der Website. Der Gast bekommt automatisch eine Eingangsbestätigung; die verbindliche Zusage schreiben oder telefonieren Sie selbst."
+        description="Anfragen aus dem Formular auf der Website. Beim Eingang bekommt der Gast automatisch eine Empfangsbestätigung. Stellen Sie den Status auf „Bestätigt“ oder „Abgesagt“, schreiben wir dem Gast auch die Antwort – solange das Kästchen darunter gesetzt ist."
       />
 
       <Card title={`Kommende Reservierungen (${upcoming.length})`} className="mb-6">
