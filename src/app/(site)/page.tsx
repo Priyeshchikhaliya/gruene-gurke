@@ -81,13 +81,12 @@ export default async function HomePage() {
           </FadeIn>
           <FadeIn delay={0.32}>
             <div className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:flex-wrap">
-              <Link href={routes.menu} className={buttonStyles({ variant: "light", size: "lg" })}>
+              <Link href={routes.reservation} className={buttonStyles({ variant: "light", size: "lg" })}>
+                Tisch reservieren
+              </Link>
+              <Link href={routes.menu} className={buttonStyles({ variant: "outlineLight", size: "lg" })}>
                 Zur Speisekarte
               </Link>
-              <a href={siteConfig.phone.href} className={buttonStyles({ variant: "outlineLight", size: "lg" })}>
-                <Phone className="h-4 w-4" />
-                {siteConfig.phone.display}
-              </a>
             </div>
           </FadeIn>
         </div>
@@ -258,8 +257,8 @@ export default async function HomePage() {
       </section>
 
       <CtaBand
-        title="Bestellungen und Reservierungen unter 03943 634256"
-        text="Alle Gerichte und Getränke auch zum Abholen und Mitnehmen."
+        title="Reservieren Sie Ihren Tisch"
+        text="In wenigen Schritten online. Wir bestätigen Ihre Anfrage persönlich per E-Mail."
       />
     </>
   );

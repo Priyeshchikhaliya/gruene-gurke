@@ -13,10 +13,10 @@ const schema = z
     email: z.email("Bitte eine gültige E-Mail-Adresse angeben.").max(120, "Bitte kürzer fassen."),
     phone: z.string().trim().min(6, "Bitte eine gültige Telefonnummer angeben.").max(30, "Bitte eine gültige Telefonnummer angeben."),
     guests: z.coerce
-      .number({ error: "Bitte ausfüllen." })
-      .int("Bitte eine gültige Personenzahl wählen.")
-      .min(1, "Bitte eine gültige Personenzahl wählen.")
-      .max(12, "Für Gruppen über 12 Personen rufen Sie uns bitte an."),
+      .number({ error: "Bitte die Anzahl der Personen angeben." })
+      .int("Bitte eine ganze Zahl angeben.")
+      .min(1, "Bitte mindestens eine Person angeben.")
+      .max(50, "Für mehr als 50 Personen sprechen wir das gern persönlich ab. Rufen Sie uns bitte an."),
     date: z.iso.date("Bitte ein gültiges Datum wählen."),
     time: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Bitte eine gültige Uhrzeit wählen."),
     message: z.string().trim().max(1000, "Bitte kürzer fassen.").optional(),

@@ -21,13 +21,16 @@ export default function ReservationPage() {
             title="Tisch reservieren"
             intro="Senden Sie uns Ihre Anfrage. Wir melden uns so schnell wie möglich bei Ihnen."
           />
-          <p className="mt-8 text-sm text-muted">Bestellungen und Reservierungen auch telefonisch unter</p>
-          <a
-            href={siteConfig.phone.href}
-            className="mt-1 inline-flex items-center gap-2 font-display text-2xl text-forest-900 hover:text-forest-700 sm:text-3xl"
-          >
-            <Phone className="h-5 w-5" /> {siteConfig.phone.display}
-          </a>
+          <p className="mt-6 text-sm text-muted">
+            Lieber telefonisch?{" "}
+            <a
+              href={siteConfig.phone.href}
+              className="inline-flex items-center gap-1.5 font-medium text-forest-800 underline underline-offset-4 hover:text-forest-700"
+            >
+              <Phone className="h-3.5 w-3.5" />
+              {siteConfig.phone.display}
+            </a>
+          </p>
           <div className="mt-8 rounded-2xl bg-cream-100 p-5 sm:p-6">
             <p className="text-xs uppercase tracking-[0.2em] text-forest-700">Gut zu wissen</p>
             <ul className="mt-3 space-y-2 text-sm leading-relaxed text-ink-700">
@@ -37,7 +40,7 @@ export default function ReservationPage() {
               </li>
               <li className="flex gap-3">
                 <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold-500" aria-hidden="true" />
-                Für größere Gruppen und Feiern rufen Sie uns bitte an.
+                Auch größere Gesellschaften können Sie hier anfragen.
               </li>
               <li className="flex gap-3">
                 <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold-500" aria-hidden="true" />

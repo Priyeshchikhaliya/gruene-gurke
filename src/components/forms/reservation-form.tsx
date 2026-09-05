@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { createReservation, type ReservationState } from "@/actions/reservations";
 import { Button } from "@/components/ui/button";
-import { Checkbox, FieldError, Honeypot, Input, Label, Select, Textarea } from "@/components/ui/field";
+import { Checkbox, FieldError, Honeypot, Input, Label, Textarea } from "@/components/ui/field";
 import { routes } from "@/lib/routes";
 
 const initial: ReservationState = { status: "idle" };
@@ -59,17 +59,34 @@ export function ReservationForm() {
 
       <div>
         <Label htmlFor="guests" required>Personen</Label>
-        <Select id="guests" name="guests" defaultValue="2" aria-invalid={!!err("guests")} aria-describedby="guests-error">
-          {Array.from({ length: 12 }, (_, i) => i + 1).map((n) => (
-            <option key={n} value={n}>{n}</option>
-          ))}
-        </Select>
+        <Input
+          id="guests"
+          name="guests"
+          type="number"
+          min={1}
+          max={50}
+          step={1}
+          defaultValue={2}
+          inputMode="numeric"
+          required
+          aria-invalid={!!err("guests")}
+          aria-describedby="guests-error guests-hint"
+        />
+        <p id="guests-hint" className="mt-2 text-xs text-muted">
+          Auch größere Gesellschaften sind willkommen.
+        </p>
         <FieldError id="guests-error" message={err("guests")} />
       </div>
 
       <div className="sm:col-span-2">
-        <Label htmlFor="message" hint="optional">Anmerkungen</Label>
-        <Textarea id="message" name="message" aria-invalid={!!err("message")} aria-describedby="message-error" />
+        <Label htmlFor="message" hint="optional">Anmerkungen und Sonderwünsche</Label>
+        <Textarea
+          id="message"
+          name="message"
+          placeholder="Anlass, Kinderstuhl, Sitzplatz auf der Terrasse, Allergien …"
+          aria-invalid={!!err("message")}
+          aria-describedby="message-error"
+        />
         <FieldError id="message-error" message={err("message")} />
       </div>
 

@@ -41,9 +41,9 @@ export type SiteSetting = {
 export const siteSettings: SiteSetting[] = [
   {
     key: "banner_text",
-    value: "Bestellungen und Reservierungen unter",
+    value: "Bestellungen und Abholung unter",
     label: "Hinweisleiste oben",
-    hint: "Steht ganz oben auf jeder Seite, direkt vor der Telefonnummer.",
+    hint: "Steht ganz oben auf jeder Seite, direkt vor der Telefonnummer. Der Link zur Reservierung davor steht fest.",
     multiline: false,
   },
   {

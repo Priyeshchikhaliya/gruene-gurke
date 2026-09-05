@@ -90,8 +90,8 @@ export default async function MenuPage() {
       </Section>
 
       <CtaBand
-        title="Bestellungen und Reservierungen unter 03943 634256"
-        text="Alle Gerichte und Getränke auch zum Abholen und Mitnehmen."
+        title="Reservieren Sie Ihren Tisch"
+        text="Für den Besuch bei uns reservieren Sie am besten vorab online."
       />
     </>
   );

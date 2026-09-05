@@ -52,8 +52,8 @@ export default async function GalleryPage() {
       </Section>
 
       <CtaBand
-        title="Bestellungen und Reservierungen unter 03943 634256"
-        text="Alle Gerichte und Getränke auch zum Abholen und Mitnehmen."
+        title="Reservieren Sie Ihren Tisch"
+        text="Ob Familienfeier oder Abendessen zu zweit: Reservieren Sie bequem online."
       />
     </>
   );
