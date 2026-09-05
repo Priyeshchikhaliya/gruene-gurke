@@ -100,6 +100,8 @@ export type ReservationDecisionInput = {
   date: string;
   time: string;
   guests: number;
+  /** Optionaler Grund; wird nur bei einer Absage mitgeschickt. */
+  reason?: string;
 };
 
 /**
@@ -126,6 +128,11 @@ export async function sendReservationDecision(input: ReservationDecisionInput) {
     ? `<p style="margin:0 0 16px;line-height:1.6">Guten Tag ${escapeHtml(input.name)},<br>wir haben Ihren Tisch reserviert und freuen uns auf Ihren Besuch.</p>`
     : `<p style="margin:0 0 16px;line-height:1.6">Guten Tag ${escapeHtml(input.name)},<br>leider können wir Ihre Reservierungsanfrage nicht bestätigen. Bitte rufen Sie uns an, wir finden gern einen anderen Termin.</p>`;
 
+  const reason =
+    !confirmed && input.reason
+      ? `<p style="margin:16px 0 0;padding:12px 16px;background:#f5f1e8;border-radius:8px;line-height:1.6">${escapeHtml(input.reason)}</p>`
+      : "";
+
   const outro = confirmed
     ? `<p style="margin:16px 0 0;line-height:1.6">Sollten Sie den Termin nicht wahrnehmen können, geben Sie uns bitte kurz telefonisch Bescheid unter ${escapeHtml(siteConfig.phone.display)}.</p>`
     : `<p style="margin:16px 0 0;line-height:1.6">Sie erreichen uns unter ${escapeHtml(siteConfig.phone.display)}.</p>`;
@@ -139,7 +146,7 @@ export async function sendReservationDecision(input: ReservationDecisionInput) {
       : `Ihre Reservierungsanfrage am ${formatDate(input.date)}`,
     html: shell(
       confirmed ? "Ihre Reservierung ist bestätigt" : "Ihre Reservierungsanfrage",
-      `${intro}<table style="border-collapse:collapse">${details}</table>${outro}`,
+      `${intro}<table style="border-collapse:collapse">${details}</table>${reason}${outro}`,
     ),
   });
 

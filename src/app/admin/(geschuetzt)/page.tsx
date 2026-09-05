@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CalendarCheck, Clock, Images, Mail, Type, UtensilsCrossed, Users } from "lucide-react";
+import { CalendarCheck, Clock, UtensilsCrossed, Users } from "lucide-react";
 import { AdminHeading, Card } from "@/components/admin/ui";
 import { adminCounts } from "@/lib/data/admin";
 
@@ -13,13 +13,6 @@ export default async function AdminHome() {
       title: "Reservierungen",
       value: `${counts.openReservations} offen`,
       text: "Anfragen ansehen, bestätigen oder absagen.",
-    },
-    {
-      href: "/admin/nachrichten",
-      icon: Mail,
-      title: "Nachrichten",
-      value: `${counts.unreadMessages} ungelesen`,
-      text: "Nachrichten aus dem Kontaktformular.",
     },
     {
       href: "/admin/oeffnungszeiten",
@@ -36,25 +29,11 @@ export default async function AdminHome() {
       text: "Gerichte, Preise und Kategorien pflegen.",
     },
     {
-      href: "/admin/galerie",
-      icon: Images,
-      title: "Galerie",
-      value: `${counts.photos} Bilder`,
-      text: "Bilder hochladen, beschriften und sortieren.",
-    },
-    {
       href: "/admin/jobs",
       icon: Users,
       title: "Jobs",
       value: `${counts.jobs} Stellen`,
       text: "Offene Stellen und Vorteile bearbeiten.",
-    },
-    {
-      href: "/admin/texte",
-      icon: Type,
-      title: "Texte",
-      value: "Hinweise & Einleitungen",
-      text: "Kurze Texte, die an mehreren Stellen erscheinen.",
     },
   ];
 

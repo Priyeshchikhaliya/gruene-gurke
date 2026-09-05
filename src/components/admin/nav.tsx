@@ -2,28 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  CalendarCheck,
-  Clock,
-  Images,
-  LayoutDashboard,
-  Mail,
-  type LucideIcon,
-  Type,
-  UtensilsCrossed,
-  Users,
-} from "lucide-react";
+import { CalendarCheck, Clock, LayoutDashboard, type LucideIcon, UtensilsCrossed, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const links: Array<{ href: string; label: string; icon: LucideIcon }> = [
   { href: "/admin", label: "Übersicht", icon: LayoutDashboard },
   { href: "/admin/reservierungen", label: "Reservierungen", icon: CalendarCheck },
-  { href: "/admin/nachrichten", label: "Nachrichten", icon: Mail },
   { href: "/admin/oeffnungszeiten", label: "Öffnungszeiten", icon: Clock },
   { href: "/admin/speisekarte", label: "Speisekarte", icon: UtensilsCrossed },
-  { href: "/admin/galerie", label: "Galerie", icon: Images },
   { href: "/admin/jobs", label: "Jobs", icon: Users },
-  { href: "/admin/texte", label: "Texte", icon: Type },
 ];
 
 export function AdminNav() {
