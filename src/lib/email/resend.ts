@@ -34,7 +34,7 @@ function shell(title: string, body: string) {
     <p style="margin:0 0 24px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#1d3728">${escapeHtml(siteConfig.name)}</p>
     <h1 style="margin:0 0 16px;font-size:24px;font-weight:600">${escapeHtml(title)}</h1>
     ${body}
-    <p style="margin:32px 0 0;font-size:12px;color:#8b8a82">${escapeHtml(siteConfig.address.street)}, ${escapeHtml(siteConfig.address.postalCode)} ${escapeHtml(siteConfig.address.city)} · ${escapeHtml(siteConfig.phone)}</p>
+    <p style="margin:32px 0 0;font-size:12px;color:#8b8a82">${escapeHtml(siteConfig.address.street)}, ${escapeHtml(siteConfig.address.postalCode)} ${escapeHtml(siteConfig.address.city)} · ${escapeHtml(siteConfig.phone.display)}</p>
   </div></body></html>`;
 }
 
@@ -46,21 +46,19 @@ export type ReservationEmailInput = {
   date: string;
   time: string;
   message?: string;
-  locale: "de" | "en";
 };
 
 /** Notifies the restaurant and sends the guest an acknowledgement. */
 export async function sendReservationEmails(input: ReservationEmailInput) {
   const env = serverEnv();
-  const de = input.locale === "de";
   const details = rows([
-    [de ? "Name" : "Name", input.name],
-    [de ? "E-Mail" : "Email", input.email],
-    [de ? "Telefon" : "Phone", input.phone],
-    [de ? "Datum" : "Date", input.date],
-    [de ? "Uhrzeit" : "Time", input.time],
-    [de ? "Personen" : "Guests", String(input.guests)],
-    ...(input.message ? [[de ? "Anmerkungen" : "Notes", input.message] as [string, string]] : []),
+    ["Name", input.name],
+    ["E-Mail", input.email],
+    ["Telefon", input.phone],
+    ["Datum", input.date],
+    ["Uhrzeit", input.time],
+    ["Personen", String(input.guests)],
+    ...(input.message ? [["Anmerkungen", input.message] as [string, string]] : []),
   ]);
 
   await resend().batch.send([
@@ -74,16 +72,10 @@ export async function sendReservationEmails(input: ReservationEmailInput) {
     {
       from: env.RESEND_FROM_EMAIL,
       to: input.email,
-      subject: de
-        ? `Ihre Reservierungsanfrage bei ${siteConfig.name}`
-        : `Your reservation request at ${siteConfig.name}`,
+      subject: `Ihre Reservierungsanfrage bei ${siteConfig.name}`,
       html: shell(
-        de ? "Wir haben Ihre Anfrage erhalten" : "We have received your request",
-        `<p style="margin:0 0 16px;line-height:1.6">${
-          de
-            ? "Vielen Dank! Wir prüfen die Verfügbarkeit und bestätigen Ihre Reservierung in Kürze per E-Mail."
-            : "Thank you! We will check availability and confirm your reservation by email shortly."
-        }</p><table style="border-collapse:collapse">${details}</table>`,
+        "Wir haben Ihre Anfrage erhalten",
+        `<p style="margin:0 0 16px;line-height:1.6">Vielen Dank! Wir prüfen die Verfügbarkeit und bestätigen Ihre Reservierung in Kürze per E-Mail.</p><table style="border-collapse:collapse">${details}</table>`,
       ),
     },
   ]);
@@ -92,8 +84,8 @@ export async function sendReservationEmails(input: ReservationEmailInput) {
 export type ContactEmailInput = {
   name: string;
   email: string;
+  phone?: string;
   message: string;
-  locale: "de" | "en";
 };
 
 export async function sendContactEmail(input: ContactEmailInput) {
@@ -108,7 +100,7 @@ export async function sendContactEmail(input: ContactEmailInput) {
       `<table style="border-collapse:collapse">${rows([
         ["Name", input.name],
         ["E-Mail", input.email],
-        ["Sprache", input.locale.toUpperCase()],
+        ...(input.phone ? [["Telefon", input.phone] as [string, string]] : []),
       ])}</table><p style="white-space:pre-wrap;line-height:1.6;margin:16px 0 0">${escapeHtml(input.message)}</p>`,
     ),
   });

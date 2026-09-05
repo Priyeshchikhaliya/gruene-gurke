@@ -1,13 +1,24 @@
-import type { InputHTMLAttributes, SelectHTMLAttributes, TextareaHTMLAttributes } from "react";
+import type { InputHTMLAttributes, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
 const control =
   "w-full rounded-lg border border-border bg-surface px-4 py-3 text-base text-foreground placeholder:text-ink-400 transition-colors focus:border-forest-700 focus:outline-none aria-[invalid=true]:border-red-600";
 
-export function Label({ htmlFor, children, hint }: { htmlFor: string; children: string; hint?: string }) {
+export function Label({
+  htmlFor,
+  children,
+  hint,
+  required,
+}: {
+  htmlFor: string;
+  children: string;
+  hint?: string;
+  required?: boolean;
+}) {
   return (
     <label htmlFor={htmlFor} className="mb-2 block text-sm font-medium text-forest-900">
       {children}
+      {required ? <span className="ml-0.5 text-red-700" aria-hidden="true">*</span> : null}
       {hint ? <span className="ml-1 font-normal text-ink-400">({hint})</span> : null}
     </label>
   );
@@ -32,6 +43,35 @@ export function Textarea({ className, ...props }: TextareaHTMLAttributes<HTMLTex
 
 export function Select({ className, ...props }: SelectHTMLAttributes<HTMLSelectElement>) {
   return <select className={cn(control, "appearance-none bg-surface", className)} {...props} />;
+}
+
+export function Checkbox({
+  id,
+  name,
+  children,
+  invalid,
+  describedBy,
+}: {
+  id: string;
+  name: string;
+  children: ReactNode;
+  invalid?: boolean;
+  describedBy?: string;
+}) {
+  return (
+    <label htmlFor={id} className="flex cursor-pointer gap-3 text-sm leading-relaxed text-ink-700">
+      <input
+        id={id}
+        name={name}
+        type="checkbox"
+        value="on"
+        aria-invalid={invalid}
+        aria-describedby={describedBy}
+        className="mt-1 h-4 w-4 shrink-0 accent-forest-800"
+      />
+      <span>{children}</span>
+    </label>
+  );
 }
 
 /** Hidden anti-spam field. Bots fill it, humans never see it. */

@@ -1,73 +1,97 @@
 # Grüne Gurke
 
-Premium restaurant website: bilingual (DE/EN), table reservations, contact form,
-and an admin area for menu, opening hours and gallery.
+Website der Gaststätte und des Vereinsheims „Grüne Gurke“ in Wernigerode.
+Einsprachig Deutsch, mit vollständiger Speisekarte, Galerie, Jobs, Kontaktformular
+und Tischreservierung.
 
 ## Stack
 
-| Concern         | Choice                                              |
-| --------------- | --------------------------------------------------- |
-| Framework       | Next.js 16 (App Router, Server Actions), TypeScript |
-| Styling         | Tailwind CSS v4, design tokens in `globals.css`     |
-| Motion          | `motion` (Framer Motion)                            |
-| i18n            | `next-intl`, routes under `/de` and `/en`           |
-| Database & auth | Supabase (Postgres + RLS, Auth, Storage)            |
-| Email           | Resend                                              |
-| Validation      | Zod 4                                               |
-| Hosting         | Vercel                                              |
+| Bereich          | Wahl                                             |
+| ---------------- | ------------------------------------------------ |
+| Framework        | Next.js 16 (App Router, Server Actions), TypeScript |
+| Styling          | Tailwind CSS v4, Design-Tokens in `globals.css`  |
+| Animation        | `motion` plus CSS-Reveal                          |
+| Datenbank & Auth | Supabase (Postgres + RLS, Auth, Storage)          |
+| E-Mail           | Resend                                            |
+| Validierung      | Zod 4                                             |
+| Hosting          | Vercel                                            |
 
-## Getting started
+## Loslegen
 
 ```bash
 npm install
-cp .env.example .env.local   # fill in Supabase + Resend keys
+cp .env.example .env.local   # Supabase- und Resend-Schlüssel eintragen
 npm run dev
 ```
 
-Then apply the database schema — see [`supabase/README.md`](supabase/README.md).
+Danach das Datenbankschema einspielen – siehe [`supabase/README.md`](supabase/README.md).
 
-## Scripts
+## Skripte
 
-| Script          | What it does                     |
-| --------------- | -------------------------------- |
-| `npm run dev`   | Dev server at http://localhost:3000 |
-| `npm run build` | Production build                 |
-| `npm run start` | Serve the production build       |
-| `npm run lint`  | ESLint                           |
+| Skript          | Wirkung                              |
+| --------------- | ------------------------------------ |
+| `npm run dev`   | Entwicklungsserver auf Port 3000     |
+| `npm run build` | Produktionsbuild                     |
+| `npm run start` | Produktionsbuild ausliefern          |
+| `npm run lint`  | ESLint                               |
 
-## Project layout
+## Seiten
+
+| Pfad               | Inhalt                                             |
+| ------------------ | -------------------------------------------------- |
+| `/`                | Start: Hero, Angebot, Öffnungszeiten, Galerie, Jobs, Anfahrt |
+| `/speisekarte`     | Vollständige Karte mit Preisen, Allergenen und PDF |
+| `/feiern-catering` | Räume für Feiern und Partyservice                  |
+| `/galerie`         | Bilder mit Lightbox                                |
+| `/jobs`            | Offene Stellen                                     |
+| `/kontakt`         | Kontaktdaten, Formular, Karte                      |
+| `/reservierung`    | Tischanfrage                                       |
+| `/impressum`, `/datenschutz` | Rechtstexte                              |
+| `/admin`           | Platzhalter für den Verwaltungsbereich             |
+
+## Projektstruktur
 
 ```
 src/
-  actions/        Server Actions (reservations, contact)
+  actions/        Server Actions (Reservierung, Kontakt)
   app/
-    [locale]/     Root layout, locale-aware routes
-      (site)/     Public pages with header + footer
-      admin/      Admin area (Supabase Auth, coming next)
+    layout.tsx    Wurzel-Layout, Schriften, Metadaten
+    (site)/       Öffentliche Seiten mit Header und Footer
+    admin/        Verwaltungsbereich (folgt)
     sitemap.ts, robots.ts
   components/
-    forms/        Reservation + contact forms
-    layout/       Header, footer, nav, locale switcher
-    ui/           Buttons, fields, sections, motion helpers
-  i18n/           next-intl routing + request config
+    forms/        Kontakt- und Reservierungsformular
+    gallery/      Galerie-Raster mit Lightbox
+    layout/       Header, Footer, mobile Navigation
+    legal/        Renderer für Impressum und Datenschutz
+    menu/         Speisekarte
+    seo/          JSON-LD
+    ui/           Buttons, Felder, Abschnitte, Karte, Öffnungszeiten
   lib/
-    supabase/     Browser, server and admin (service-role) clients + DB types
-    email/        Resend templates
-    env.ts        Lazy, validated server env
-    site.ts       Static site facts (address, phone, socials)
-  messages/       de.json / en.json — every user-facing string lives here
-  proxy.ts        Locale detection (Next 16 "proxy", formerly middleware)
+    menu.ts       Speisekarte aus dem PDF, Preise in Cent
+    gallery.ts    Bilder mit Alternativtexten
+    hours.ts      Saisonale Öffnungszeiten
+    legal.ts      Impressum und Datenschutzerklärung
+    routes.ts     Alle Pfade und die Hauptnavigation
+    site.ts       Adresse, Telefon, Social, Bilder
+    env.ts        Geprüfte Server-Umgebung
+    supabase/     Browser-, Server- und Service-Role-Client
+    email/        Resend-Vorlagen
 supabase/
-  migrations/     SQL schema with RLS and storage policies
+  migrations/     SQL-Schema mit RLS und Storage-Policies
 ```
 
-## How data flows
+## Datenfluss
 
-- **Reservations / contact**: client form → Server Action → Zod validation →
-  insert with the service-role client → Resend notification + guest
-  acknowledgement. The anon key has no insert rights, so the public API cannot be
-  used for spam.
-- **Content** (menu, hours, gallery): public read via RLS; admin writes gated by
-  `admin_users`.
-- **Photos**: Supabase Storage bucket `gallery` (public read), served through
-  `next/image` for AVIF/WebP and responsive sizes.
+- **Reservierung und Kontakt**: Formular → Server Action → Zod-Prüfung → Insert mit dem
+  Service-Role-Client → Resend-Benachrichtigung. Der Anon-Key darf nicht schreiben, das
+  öffentliche API taugt also nicht zum Spammen.
+- **Inhalte** (Karte, Zeiten, Galerie) liegen derzeit in `src/lib/` und ziehen später in
+  Supabase um, sobald der Verwaltungsbereich steht.
+
+## Offene Punkte
+
+- Verwaltungsbereich mit Supabase Auth.
+- Bilder in besserer Auflösung vom Betreiber; aktuell die Dateien der bisherigen Website.
+- Die Datenschutzerklärung stammt von der alten Seite und muss vor dem Livegang an den
+  neuen Stack angepasst werden (Vercel, Supabase, Resend, selbst gehostete Schriften).

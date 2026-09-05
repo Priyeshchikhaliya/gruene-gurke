@@ -1,7 +1,6 @@
 "use server";
 
 import { z } from "zod";
-import { routing } from "@/i18n/routing";
 import { sendReservationEmails } from "@/lib/email/resend";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { FormState } from "./types";
@@ -9,16 +8,20 @@ import { firstFieldErrors, isHoneypotTripped, todayInBerlin } from "./utils";
 
 const schema = z
   .object({
-    name: z.string().trim().min(2, "tooShort").max(80, "tooLong"),
-    email: z.email("invalidEmail").max(120, "tooLong"),
-    phone: z.string().trim().min(6, "invalidPhone").max(30, "invalidPhone"),
-    guests: z.coerce.number({ error: "required" }).int("guestsRange").min(1, "guestsRange").max(12, "guestsRange"),
-    date: z.iso.date("invalidDate"),
-    time: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "invalidTime"),
-    message: z.string().trim().max(1000, "tooLong").optional(),
-    locale: z.enum(routing.locales),
+    name: z.string().trim().min(2, "Bitte ausfüllen.").max(80, "Bitte kürzer fassen."),
+    email: z.email("Bitte eine gültige E-Mail-Adresse angeben.").max(120, "Bitte kürzer fassen."),
+    phone: z.string().trim().min(6, "Bitte eine gültige Telefonnummer angeben.").max(30, "Bitte eine gültige Telefonnummer angeben."),
+    guests: z.coerce
+      .number({ error: "Bitte ausfüllen." })
+      .int("Bitte eine gültige Personenzahl wählen.")
+      .min(1, "Bitte eine gültige Personenzahl wählen.")
+      .max(12, "Für Gruppen über 12 Personen rufen Sie uns bitte an."),
+    date: z.iso.date("Bitte ein gültiges Datum wählen."),
+    time: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Bitte eine gültige Uhrzeit wählen."),
+    message: z.string().trim().max(1000, "Bitte kürzer fassen.").optional(),
+    consent: z.literal("on", "Bitte stimmen Sie der Speicherung Ihrer Angaben zu."),
   })
-  .refine((v) => v.date >= todayInBerlin(), { error: "pastDate", path: ["date"] });
+  .refine((v) => v.date >= todayInBerlin(), { error: "Das Datum liegt in der Vergangenheit.", path: ["date"] });
 
 export type ReservationField = keyof z.infer<typeof schema>;
 export type ReservationState = FormState<ReservationField>;
@@ -46,15 +49,18 @@ export async function createReservation(
       reserved_date: data.date,
       reserved_time: data.time,
       message: data.message || null,
-      locale: data.locale,
+      locale: "de",
     });
     if (error) throw error;
   } catch (err) {
     console.error("[reservations] insert failed", err);
-    return { status: "error", formError: "genericError" };
+    return {
+      status: "error",
+      formError: "Das hat leider nicht geklappt. Bitte versuchen Sie es erneut oder rufen Sie uns an.",
+    };
   }
 
-  // The request is stored; a failed notification must not fail the user.
+  // Anfrage ist gespeichert; eine fehlgeschlagene Benachrichtigung darf den Gast nicht scheitern lassen.
   try {
     await sendReservationEmails({
       name: data.name,
@@ -64,7 +70,6 @@ export async function createReservation(
       date: data.date,
       time: data.time,
       message: data.message,
-      locale: data.locale,
     });
   } catch (err) {
     console.error("[reservations] email failed", err);

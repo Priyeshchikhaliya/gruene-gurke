@@ -33,6 +33,7 @@ export type ContactMessageRow = Timestamps & {
   id: string;
   name: string;
   email: string;
+  phone: string | null;
   message: string;
   locale: string;
   is_read: boolean;
@@ -116,7 +117,7 @@ export type Database = {
       contact_messages: Table<
         ContactMessageRow,
         "name" | "email" | "message" | "locale",
-        Gen | "is_read"
+        Gen | "phone" | "is_read"
       >;
       menu_categories: Table<
         MenuCategoryRow,

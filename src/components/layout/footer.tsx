@@ -1,51 +1,79 @@
-import { getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
+import Image from "next/image";
+import Link from "next/link";
+import { ExternalLink } from "lucide-react";
+import { HoursCompact } from "@/components/ui/hours-table";
+import { navLinks, routes } from "@/lib/routes";
 import { siteConfig } from "@/lib/site";
 
-export async function Footer() {
-  const t = await getTranslations();
+export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-auto border-t border-border bg-forest-950 text-cream-100">
-      <div className="container-site grid gap-12 py-16 md:grid-cols-3">
+    <footer className="mt-auto bg-forest-950 text-cream-100">
+      <div className="container-site grid gap-10 py-12 sm:grid-cols-2 sm:gap-12 lg:grid-cols-[1.2fr_1fr_1.2fr_0.8fr] lg:py-16">
         <div>
-          <p className="font-display text-3xl">{siteConfig.name}</p>
-          <p className="mt-3 max-w-xs text-sm text-cream-200/70">{t("footer.tagline")}</p>
+          <div className="inline-block rounded-2xl bg-cream-50 p-2">
+            <Image src={siteConfig.images.logo} alt={siteConfig.name} width={400} height={380} className="h-14 w-auto sm:h-16" />
+          </div>
+          <p className="mt-5 max-w-xs text-sm leading-relaxed text-cream-200/70">
+            Vereinsheim und gutbürgerliche Gaststätte für jedermann.
+          </p>
+          <a
+            href={siteConfig.social.facebook}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-5 inline-flex items-center gap-2 text-sm text-cream-200/80 hover:text-cream-50"
+          >
+            Facebook <ExternalLink className="h-3.5 w-3.5" />
+          </a>
         </div>
 
-        <address className="text-sm not-italic leading-relaxed text-cream-200/80">
-          <a href={siteConfig.mapsUrl} target="_blank" rel="noreferrer" className="hover:text-cream-50">
-            {siteConfig.address.street}
+        <div>
+          <p className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-gold-400">Kontakt</p>
+          <address className="text-sm not-italic leading-relaxed text-cream-200/80">
+            <a href={siteConfig.mapsUrl} target="_blank" rel="noreferrer" className="hover:text-cream-50">
+              {siteConfig.address.street}
+              <br />
+              {siteConfig.address.postalCode} {siteConfig.address.city}
+            </a>
             <br />
-            {siteConfig.address.postalCode} {siteConfig.address.city}
-          </a>
-          <br />
-          <a href={`tel:${siteConfig.phone.replace(/\s+/g, "")}`} className="mt-3 inline-block hover:text-cream-50">
-            {siteConfig.phone}
-          </a>
-          <br />
-          <a href={`mailto:${siteConfig.email}`} className="hover:text-cream-50">
-            {siteConfig.email}
-          </a>
-        </address>
+            <a href={siteConfig.phone.href} className="mt-3 inline-block hover:text-cream-50">
+              {siteConfig.phone.display}
+            </a>
+            <br />
+            <a href={`mailto:${siteConfig.email}`} className="break-all hover:text-cream-50">
+              {siteConfig.email}
+            </a>
+          </address>
+        </div>
 
-        <nav className="flex flex-col gap-2 text-sm text-cream-200/80" aria-label="Footer">
-          <Link href="/menu" className="hover:text-cream-50">{t("nav.menu")}</Link>
-          <Link href="/gallery" className="hover:text-cream-50">{t("nav.gallery")}</Link>
-          <Link href="/reservations" className="hover:text-cream-50">{t("nav.reserve")}</Link>
-          <Link href="/contact" className="hover:text-cream-50">{t("nav.contact")}</Link>
+        <div>
+          <p className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-gold-400">Öffnungszeiten</p>
+          <p className="mb-3 text-sm text-cream-200/80">Täglich ab 11 Uhr geöffnet</p>
+          <HoursCompact className="text-cream-200/80" />
+        </div>
+
+        <nav aria-label="Fußzeile">
+          <p className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-gold-400">Seiten</p>
+          <ul className="flex flex-col gap-2 text-sm text-cream-200/80">
+            {navLinks.map((link) => (
+              <li key={link.href}>
+                <Link href={link.href} className="hover:text-cream-50">{link.label}</Link>
+              </li>
+            ))}
+            <li>
+              <Link href={routes.reservation} className="hover:text-cream-50">Tisch reservieren</Link>
+            </li>
+          </ul>
         </nav>
       </div>
 
       <div className="border-t border-cream-50/10">
-        <div className="container-site flex flex-col gap-2 py-6 text-xs text-cream-200/50 sm:flex-row sm:items-center sm:justify-between">
-          <p>
-            © {year} {siteConfig.name}. {t("footer.rights")}
-          </p>
-          <p className="flex gap-4">
-            <span>{t("footer.imprint")}</span>
-            <span>{t("footer.privacy")}</span>
+        <div className="container-site flex flex-col gap-3 py-6 text-xs text-cream-200/50 sm:flex-row sm:items-center sm:justify-between">
+          <p>© {year} Grüne Gurke / {siteConfig.legalName}</p>
+          <p className="flex gap-5">
+            <Link href={routes.imprint} className="hover:text-cream-50">Impressum</Link>
+            <Link href={routes.privacy} className="hover:text-cream-50">Datenschutz</Link>
           </p>
         </div>
       </div>

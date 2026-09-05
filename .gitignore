@@ -42,3 +42,7 @@ next-env.d.ts
 
 # keep the example env file tracked
 !.env.example
+
+# raw assets from the old site (kept locally only)
+/images_website/
+/content.txt

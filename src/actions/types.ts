@@ -2,9 +2,9 @@ export type FormStatus = "idle" | "success" | "error";
 
 export type FormState<Field extends string = string> = {
   status: FormStatus;
-  /** Field → translation key under `<namespace>.errors.*` */
+  /** Feld → fertige deutsche Fehlermeldung */
   fieldErrors?: Partial<Record<Field, string>>;
-  /** Translation key under `<namespace>.form.*` */
+  /** Formularweite Fehlermeldung */
   formError?: string;
 };
 
