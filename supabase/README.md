@@ -83,3 +83,9 @@ npx supabase gen types typescript --project-id <ref> --schema public \
 ```bash
 npm run seed:generate
 ```
+
+## Vor der Übergabe: Testdaten entfernen
+
+`testdaten-loeschen.sql` im SQL Editor ausführen. Es leert nur die
+Reservierungen und die Nachrichten aus dem Kontaktformular. Speisekarte,
+Öffnungszeiten, Galerie, Jobs und die Zugänge bleiben bestehen.
