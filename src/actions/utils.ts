@@ -15,10 +15,16 @@ export function todayInBerlin() {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Berlin" }).format(new Date());
 }
 
-/** Bots fill hidden fields; humans don't. */
+/**
+ * Bots füllen versteckte Felder aus, Menschen nicht. Ein Treffer wird
+ * protokolliert: Sollte doch einmal eine echte Einsendung hängen bleiben,
+ * ist das im Server-Log sichtbar statt spurlos zu verschwinden.
+ */
 export function isHoneypotTripped(formData: FormData) {
-  const value = formData.get("website");
-  return typeof value === "string" && value.length > 0;
+  const value = formData.get("zusatzangabe");
+  const tripped = typeof value === "string" && value.trim().length > 0;
+  if (tripped) console.warn("[falle] Einsendung verworfen, verstecktes Feld war ausgefüllt.");
+  return tripped;
 }
 
 /** Abgeschickte Werte zurückgeben, damit das Formular sie behalten kann. */

@@ -77,12 +77,26 @@ export function Checkbox({
   );
 }
 
-/** Hidden anti-spam field. Bots fill it, humans never see it. */
+/**
+ * Falle gegen automatische Einsendungen. Menschen sehen das Feld nie.
+ *
+ * Wichtig: Das Feld ist per `hidden` wirklich ausgeblendet und heißt nicht
+ * "website". Ein sichtbar platziertes Feld mit einem geläufigen Namen füllen
+ * Browser aus dem gespeicherten Adressbuch aus - dann verschwinden echte
+ * Nachrichten spurlos.
+ */
 export function Honeypot() {
   return (
-    <div aria-hidden="true" className="absolute -left-[9999px] top-0 h-px w-px overflow-hidden">
-      <label htmlFor="website">Website</label>
-      <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" />
+    <div hidden aria-hidden="true">
+      <label htmlFor="zusatzangabe">Bitte leer lassen</label>
+      <input
+        id="zusatzangabe"
+        name="zusatzangabe"
+        type="text"
+        tabIndex={-1}
+        autoComplete="off"
+        defaultValue=""
+      />
     </div>
   );
 }
