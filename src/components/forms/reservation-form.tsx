@@ -1,16 +1,32 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { createReservation, type ReservationState } from "@/actions/reservations";
 import { Button } from "@/components/ui/button";
-import { Checkbox, FieldError, Honeypot, Input, Label, Textarea } from "@/components/ui/field";
+import { Checkbox, FieldError, Honeypot, Input, Label, Select, Textarea } from "@/components/ui/field";
+import {
+  latestReservationDate,
+  seasonForDate,
+  timeSlots,
+  todayInBerlin,
+  type OpeningSeasonInfo,
+} from "@/lib/opening";
 import { routes } from "@/lib/routes";
 
 const initial: ReservationState = { status: "idle" };
 
-export function ReservationForm() {
+export function ReservationForm({ seasons }: { seasons: OpeningSeasonInfo[] }) {
   const [state, action, pending] = useActionState(createReservation, initial);
+
+  const today = todayInBerlin();
+  const latest = latestReservationDate(today);
+
+  // Die wählbaren Uhrzeiten hängen vom Datum ab: im Winter schließt die
+  // Küche eine halbe Stunde früher als im Sommer.
+  const [date, setDate] = useState(() => state.values?.date ?? "");
+  const season = seasonForDate(seasons, date || today);
+  const slots = timeSlots(season);
 
   if (state.status === "success") {
     return (
@@ -25,7 +41,6 @@ export function ReservationForm() {
   // setzen wir wieder als Vorgabe ein, damit nach einem Fehler nichts
   // erneut getippt werden muss.
   const value = (field: keyof NonNullable<ReservationState["values"]>) => state.values?.[field] ?? "";
-  const today = new Date().toISOString().slice(0, 10);
 
   return (
     <form action={action} noValidate className="relative grid gap-5 sm:grid-cols-2 sm:gap-6">
@@ -51,13 +66,59 @@ export function ReservationForm() {
 
       <div>
         <Label htmlFor="date" required>Datum</Label>
-        <Input id="date" name="date" type="date" min={today} defaultValue={value("date")} required aria-invalid={!!err("date")} aria-describedby="date-error" />
+        <Input
+          id="date"
+          name="date"
+          type="date"
+          min={today}
+          max={latest}
+          defaultValue={value("date")}
+          onChange={(event) => setDate(event.currentTarget.value)}
+          required
+          aria-invalid={!!err("date")}
+          aria-describedby="date-error"
+        />
         <FieldError id="date-error" message={err("date")} />
       </div>
 
       <div>
         <Label htmlFor="time" required>Uhrzeit</Label>
-        <Input id="time" name="time" type="time" step={900} defaultValue={value("time")} required aria-invalid={!!err("time")} aria-describedby="time-error" />
+        {slots.length > 0 ? (
+          <Select
+            key={`${season?.slug ?? "keine"}-${value("time")}`}
+            id="time"
+            name="time"
+            defaultValue={slots.includes(value("time")) ? value("time") : ""}
+            required
+            aria-invalid={!!err("time")}
+            aria-describedby="time-error time-hint"
+          >
+            <option value="" disabled>
+              Bitte wählen
+            </option>
+            {slots.map((slot) => (
+              <option key={slot} value={slot}>
+                {slot} Uhr
+              </option>
+            ))}
+          </Select>
+        ) : (
+          <Input
+            id="time"
+            name="time"
+            type="time"
+            step={900}
+            defaultValue={value("time")}
+            required
+            aria-invalid={!!err("time")}
+            aria-describedby="time-error"
+          />
+        )}
+        {season ? (
+          <p id="time-hint" className="mt-2 text-xs text-muted">
+            {season.label}: Küche nimmt Bestellungen von {season.opens} bis {season.kitchenUntil} Uhr an.
+          </p>
+        ) : null}
         <FieldError id="time-error" message={err("time")} />
       </div>
 

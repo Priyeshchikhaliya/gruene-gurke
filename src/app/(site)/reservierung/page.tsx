@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Phone } from "lucide-react";
 import { ReservationForm } from "@/components/forms/reservation-form";
 import { Section, SectionHeading } from "@/components/ui/section";
+import { getSeasons } from "@/lib/data/content";
 import { routes } from "@/lib/routes";
 import { siteConfig } from "@/lib/site";
 
@@ -12,7 +13,19 @@ export const metadata: Metadata = {
   alternates: { canonical: routes.reservation },
 };
 
-export default function ReservationPage() {
+export const revalidate = 600;
+
+export default async function ReservationPage() {
+  const seasons = await getSeasons();
+  const openingInfo = seasons.map((season) => ({
+    slug: season.slug,
+    label: season.label,
+    startMonth: season.startMonth,
+    endMonth: season.endMonth,
+    opens: season.restaurant.opens,
+    kitchenUntil: season.kitchenUntil,
+  }));
+
   return (
     <Section>
       <div className="grid gap-10 lg:grid-cols-[1fr_1.5fr] lg:gap-20">
@@ -36,7 +49,7 @@ export default function ReservationPage() {
             <ul className="mt-3 space-y-2 text-sm leading-relaxed text-ink-700">
               <li className="flex gap-3">
                 <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold-500" aria-hidden="true" />
-                Täglich ab 11 Uhr geöffnet.
+                Täglich ab {seasons[0]?.restaurant.opens ?? "11:00"} Uhr geöffnet.
               </li>
               <li className="flex gap-3">
                 <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold-500" aria-hidden="true" />
@@ -50,7 +63,7 @@ export default function ReservationPage() {
           </div>
         </div>
         <div className="rounded-2xl border border-border bg-surface p-5 sm:p-6 md:p-8">
-          <ReservationForm />
+          <ReservationForm seasons={openingInfo} />
         </div>
       </div>
     </Section>

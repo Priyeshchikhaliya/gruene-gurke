@@ -30,7 +30,26 @@ function formatDay(isoDate: string) {
   return dateFormat.format(new Date(`${isoDate}T12:00:00`));
 }
 
-function ReservationCard({ reservation }: { reservation: ReservationRow }) {
+/** Wie voll ist der Abend? Abgesagte zählen nicht mit. */
+function dayLoad(all: ReservationRow[], date: string, exceptId?: string) {
+  const others = all.filter(
+    (r) => r.reserved_date === date && r.status !== "abgesagt" && r.id !== exceptId,
+  );
+  return {
+    count: others.length,
+    guests: others.reduce((sum, r) => sum + r.guests, 0),
+  };
+}
+
+function ReservationCard({
+  reservation,
+  all,
+}: {
+  reservation: ReservationRow;
+  all: ReservationRow[];
+}) {
+  const load = dayLoad(all, reservation.reserved_date, reservation.id);
+
   return (
     <Row>
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
@@ -59,6 +78,14 @@ function ReservationCard({ reservation }: { reservation: ReservationRow }) {
       {reservation.message ? (
         <p className="mb-4 rounded-lg bg-cream-100 px-4 py-3 text-sm leading-relaxed text-ink-700">
           „{reservation.message}“
+        </p>
+      ) : null}
+
+      {load.count > 0 ? (
+        <p className="mb-4 rounded-lg border border-gold-400/50 bg-gold-400/10 px-4 py-3 text-sm leading-relaxed text-forest-900">
+          An diesem Abend sind außerdem {load.count} {load.count === 1 ? "Reservierung" : "Reservierungen"} mit{" "}
+          {load.guests} {load.guests === 1 ? "Person" : "Personen"} vorgemerkt. Zusammen mit dieser Anfrage sind es{" "}
+          <strong>{load.guests + reservation.guests} Personen</strong>.
         </p>
       ) : null}
 
@@ -151,13 +178,22 @@ export default async function ReservationsPage({
       </div>
 
       {selectedDay ? (
-        <Card title={`${formatDay(selectedDay)} · ${forDay.length} ${forDay.length === 1 ? "Reservierung" : "Reservierungen"}`}>
+        <Card
+          title={`${formatDay(selectedDay)} · ${forDay.length} ${forDay.length === 1 ? "Reservierung" : "Reservierungen"}`}
+          description={(() => {
+            const active = forDay.filter((r) => r.status !== "abgesagt");
+            const guests = active.reduce((sum, r) => sum + r.guests, 0);
+            return active.length
+              ? `Zusammen ${guests} ${guests === 1 ? "Person" : "Personen"} an diesem Tag.`
+              : undefined;
+          })()}
+        >
           {forDay.length === 0 ? (
             <EmptyHint>An diesem Tag liegt keine Reservierung vor.</EmptyHint>
           ) : (
             <div className="grid gap-4">
               {forDay.map((reservation) => (
-                <ReservationCard key={reservation.id} reservation={reservation} />
+                <ReservationCard key={reservation.id} reservation={reservation} all={reservations} />
               ))}
             </div>
           )}
@@ -174,7 +210,7 @@ export default async function ReservationsPage({
             ) : (
               <div className="grid gap-4">
                 {upcoming.map((reservation) => (
-                  <ReservationCard key={reservation.id} reservation={reservation} />
+                  <ReservationCard key={reservation.id} reservation={reservation} all={reservations} />
                 ))}
               </div>
             )}
@@ -184,7 +220,7 @@ export default async function ReservationsPage({
             <Card title={`Vergangene (${past.length})`}>
               <div className="grid gap-4">
                 {past.map((reservation) => (
-                  <ReservationCard key={reservation.id} reservation={reservation} />
+                  <ReservationCard key={reservation.id} reservation={reservation} all={reservations} />
                 ))}
               </div>
             </Card>

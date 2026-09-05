@@ -3,6 +3,8 @@
 import { z } from "zod";
 import { sendReservationEmails } from "@/lib/email/resend";
 import { isSupabaseConfigured } from "@/lib/env";
+import { getSeasons } from "@/lib/data/content";
+import { checkReservationTime, latestReservationDate } from "@/lib/opening";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { FormState } from "./types";
 import { firstFieldErrors, isHoneypotTripped, submittedValues, todayInBerlin } from "./utils";
@@ -45,6 +47,30 @@ export async function createReservation(
   }
 
   const data = parsed.data;
+
+  // Gegen die hinterlegten Öffnungszeiten prüfen. Der Browser schlägt nur
+  // gültige Zeiten vor; verlassen darf man sich darauf nicht.
+  const seasons = await getSeasons();
+  const timing = checkReservationTime(
+    seasons.map((season) => ({
+      slug: season.slug,
+      label: season.label,
+      startMonth: season.startMonth,
+      endMonth: season.endMonth,
+      opens: season.restaurant.opens,
+      kitchenUntil: season.kitchenUntil,
+    })),
+    data.date,
+    data.time,
+  );
+
+  if (!timing.ok) {
+    return {
+      status: "error",
+      fieldErrors: { [data.date > latestReservationDate() ? "date" : "time"]: timing.reason },
+      values: submittedValues(formData, FIELDS),
+    };
+  }
 
   if (isSupabaseConfigured()) {
     try {
