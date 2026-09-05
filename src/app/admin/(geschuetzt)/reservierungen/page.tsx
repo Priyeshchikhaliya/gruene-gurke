@@ -90,7 +90,12 @@ export default async function ReservationsPage() {
           </ActionForm>
 
           <div className="mt-4 border-t border-border pt-4">
-            <ConfirmDeleteButton action={deleteReservation} hidden={{ id: reservation.id }} />
+            <ConfirmDeleteButton
+              action={deleteReservation}
+              hidden={{ id: reservation.id }}
+              label="Reservierung löschen"
+              question="Reservierung wirklich löschen?"
+            />
           </div>
         </Row>
       ))}

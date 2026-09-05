@@ -167,6 +167,7 @@ export default async function OpeningHoursPage() {
                   <ConfirmDeleteButton
                     action={deleteOpeningSeason}
                     hidden={{ id: season.id }}
+                    label="Zeitraum löschen"
                     question="Zeitraum wirklich löschen?"
                   />
                 </div>

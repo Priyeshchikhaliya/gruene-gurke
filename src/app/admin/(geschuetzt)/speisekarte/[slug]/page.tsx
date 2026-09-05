@@ -151,7 +151,12 @@ export default async function MenuCategoryPage({ params }: Params) {
                             </ActionForm>
                           </div>
                           <div className="pb-1">
-                            <ConfirmDeleteButton action={deleteMenuVariant} hidden={{ id: variant.id }} />
+                            <ConfirmDeleteButton
+                              action={deleteMenuVariant}
+                              hidden={{ id: variant.id }}
+                              label="Variante löschen"
+                              question="Variante wirklich löschen?"
+                            />
                           </div>
                         </div>
                       ))}
@@ -186,7 +191,12 @@ export default async function MenuCategoryPage({ params }: Params) {
                     disableUp={index === 0}
                     disableDown={index === items.length - 1}
                   />
-                  <ConfirmDeleteButton action={deleteMenuItem} hidden={{ id: item.id }} />
+                  <ConfirmDeleteButton
+                    action={deleteMenuItem}
+                    hidden={{ id: item.id }}
+                    label="Gericht löschen"
+                    question="Gericht wirklich löschen?"
+                  />
                 </div>
               </Row>
             ))}

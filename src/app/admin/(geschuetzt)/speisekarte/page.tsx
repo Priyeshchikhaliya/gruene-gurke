@@ -74,6 +74,7 @@ export default async function MenuAdminPage() {
                   <ConfirmDeleteButton
                     action={deleteMenuCategory}
                     hidden={{ id: category.id }}
+                    label="Kategorie löschen"
                     question="Kategorie und alle Gerichte löschen?"
                   />
                 </div>
@@ -119,7 +120,12 @@ export default async function MenuAdminPage() {
                   </ActionForm>
                 </div>
                 <div className="pb-1">
-                  <ConfirmDeleteButton action={deleteMenuNote} hidden={{ id: note.id }} />
+                  <ConfirmDeleteButton
+                    action={deleteMenuNote}
+                    hidden={{ id: note.id }}
+                    label="Hinweis löschen"
+                    question="Hinweis wirklich löschen?"
+                  />
                 </div>
               </Row>
             ))}

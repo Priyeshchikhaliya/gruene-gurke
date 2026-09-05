@@ -21,6 +21,10 @@ export function ReservationForm() {
   }
 
   const err = (field: keyof NonNullable<ReservationState["fieldErrors"]>) => state.fieldErrors?.[field];
+  // React leert ein Formular nach jeder Action. Die zurückgegebenen Werte
+  // setzen wir wieder als Vorgabe ein, damit nach einem Fehler nichts
+  // erneut getippt werden muss.
+  const value = (field: keyof NonNullable<ReservationState["values"]>) => state.values?.[field] ?? "";
   const today = new Date().toISOString().slice(0, 10);
 
   return (
@@ -29,31 +33,31 @@ export function ReservationForm() {
 
       <div className="sm:col-span-2">
         <Label htmlFor="name" required>Name</Label>
-        <Input id="name" name="name" autoComplete="name" required aria-invalid={!!err("name")} aria-describedby="name-error" />
+        <Input id="name" name="name" autoComplete="name" defaultValue={value("name")} required aria-invalid={!!err("name")} aria-describedby="name-error" />
         <FieldError id="name-error" message={err("name")} />
       </div>
 
       <div>
         <Label htmlFor="email" required>E-Mail</Label>
-        <Input id="email" name="email" type="email" autoComplete="email" required aria-invalid={!!err("email")} aria-describedby="email-error" />
+        <Input id="email" name="email" type="email" autoComplete="email" defaultValue={value("email")} required aria-invalid={!!err("email")} aria-describedby="email-error" />
         <FieldError id="email-error" message={err("email")} />
       </div>
 
       <div>
         <Label htmlFor="phone" required>Telefon</Label>
-        <Input id="phone" name="phone" type="tel" autoComplete="tel" required aria-invalid={!!err("phone")} aria-describedby="phone-error" />
+        <Input id="phone" name="phone" type="tel" autoComplete="tel" defaultValue={value("phone")} required aria-invalid={!!err("phone")} aria-describedby="phone-error" />
         <FieldError id="phone-error" message={err("phone")} />
       </div>
 
       <div>
         <Label htmlFor="date" required>Datum</Label>
-        <Input id="date" name="date" type="date" min={today} required aria-invalid={!!err("date")} aria-describedby="date-error" />
+        <Input id="date" name="date" type="date" min={today} defaultValue={value("date")} required aria-invalid={!!err("date")} aria-describedby="date-error" />
         <FieldError id="date-error" message={err("date")} />
       </div>
 
       <div>
         <Label htmlFor="time" required>Uhrzeit</Label>
-        <Input id="time" name="time" type="time" step={900} required aria-invalid={!!err("time")} aria-describedby="time-error" />
+        <Input id="time" name="time" type="time" step={900} defaultValue={value("time")} required aria-invalid={!!err("time")} aria-describedby="time-error" />
         <FieldError id="time-error" message={err("time")} />
       </div>
 
@@ -66,7 +70,7 @@ export function ReservationForm() {
           min={1}
           max={50}
           step={1}
-          defaultValue={2}
+          defaultValue={state.values?.guests ?? 2}
           inputMode="numeric"
           required
           aria-invalid={!!err("guests")}
@@ -83,6 +87,7 @@ export function ReservationForm() {
         <Textarea
           id="message"
           name="message"
+          defaultValue={value("message")}
           placeholder="Anlass, Kinderstuhl, Sitzplatz auf der Terrasse, Allergien …"
           aria-invalid={!!err("message")}
           aria-describedby="message-error"
@@ -91,7 +96,13 @@ export function ReservationForm() {
       </div>
 
       <div className="sm:col-span-2">
-        <Checkbox id="consent" name="consent" invalid={!!err("consent")} describedBy="consent-error">
+        <Checkbox
+          id="consent"
+          name="consent"
+          defaultChecked={state.values?.consent === "on"}
+          invalid={!!err("consent")}
+          describedBy="consent-error"
+        >
           Ich willige ein, dass meine Angaben zur Bearbeitung der Reservierung gespeichert werden. Die{" "}
           <Link href={routes.privacy} className="underline underline-offset-2 hover:text-forest-900">
             Datenschutzerklärung

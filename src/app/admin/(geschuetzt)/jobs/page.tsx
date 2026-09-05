@@ -53,7 +53,12 @@ export default async function JobsAdminPage() {
                       disableUp={index === 0}
                       disableDown={index === postings.length - 1}
                     />
-                    <ConfirmDeleteButton action={deleteJobPosting} hidden={{ id: posting.id }} />
+                    <ConfirmDeleteButton
+                      action={deleteJobPosting}
+                      hidden={{ id: posting.id }}
+                      label="Stelle löschen"
+                      question="Stelle wirklich löschen?"
+                    />
                   </div>
                 </Row>
               ))}
@@ -96,7 +101,12 @@ export default async function JobsAdminPage() {
                     </ActionForm>
                   </div>
                   <div className="pb-1">
-                    <ConfirmDeleteButton action={deleteJobBenefit} hidden={{ id: benefit.id }} />
+                    <ConfirmDeleteButton
+                      action={deleteJobBenefit}
+                      hidden={{ id: benefit.id }}
+                      label="Punkt löschen"
+                      question="Punkt wirklich löschen?"
+                    />
                   </div>
                 </Row>
               ))}

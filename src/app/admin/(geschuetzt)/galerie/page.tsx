@@ -103,7 +103,12 @@ export default async function GalleryAdminPage() {
                         disableUp={index === 0}
                         disableDown={index === list.length - 1}
                       />
-                      <ConfirmDeleteButton action={deleteGalleryImage} hidden={{ id: image.id }} />
+                      <ConfirmDeleteButton
+                        action={deleteGalleryImage}
+                        hidden={{ id: image.id }}
+                        label="Bild löschen"
+                        question="Bild wirklich löschen?"
+                      />
                     </div>
                   </li>
                 ))}

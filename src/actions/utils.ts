@@ -20,3 +20,13 @@ export function isHoneypotTripped(formData: FormData) {
   const value = formData.get("website");
   return typeof value === "string" && value.length > 0;
 }
+
+/** Abgeschickte Werte zurückgeben, damit das Formular sie behalten kann. */
+export function submittedValues<T extends string>(formData: FormData, fields: readonly T[]) {
+  const values: Partial<Record<T, string>> = {};
+  for (const field of fields) {
+    const value = formData.get(field);
+    if (typeof value === "string") values[field] = value;
+  }
+  return values;
+}

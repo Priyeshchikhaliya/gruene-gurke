@@ -60,7 +60,12 @@ export default async function MessagesPage() {
                       Als erledigt markieren
                     </Checkbox>
                   </ActionForm>
-                  <ConfirmDeleteButton action={deleteMessage} hidden={{ id: message.id }} />
+                  <ConfirmDeleteButton
+                    action={deleteMessage}
+                    hidden={{ id: message.id }}
+                    label="Nachricht löschen"
+                    question="Nachricht wirklich löschen?"
+                  />
                 </div>
               </Row>
             ))}

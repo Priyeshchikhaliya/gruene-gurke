@@ -22,6 +22,8 @@ export function ContactForm() {
   }
 
   const err = (field: keyof NonNullable<ContactState["fieldErrors"]>) => state.fieldErrors?.[field];
+  // Siehe Reservierungsformular: Werte nach einem Fehler behalten.
+  const value = (field: keyof NonNullable<ContactState["values"]>) => state.values?.[field] ?? "";
 
   return (
     <form action={action} noValidate className="relative grid gap-5 sm:gap-6">
@@ -32,7 +34,17 @@ export function ContactForm() {
 
       <div>
         <Label htmlFor="anrede" required>Anrede</Label>
-        <Select id="anrede" name="anrede" defaultValue="" required aria-invalid={!!err("anrede")} aria-describedby="anrede-error">
+        {/* Der Schlüssel erzwingt ein Neuaufbauen: React übernimmt defaultValue
+            bei einem <select> nur beim ersten Rendern. */}
+        <Select
+          key={value("anrede")}
+          id="anrede"
+          name="anrede"
+          defaultValue={value("anrede")}
+          required
+          aria-invalid={!!err("anrede")}
+          aria-describedby="anrede-error"
+        >
           <option value="" disabled>Bitte wählen</option>
           {anredeOptions.map((o) => (
             <option key={o} value={o}>{o}</option>
@@ -44,12 +56,12 @@ export function ContactForm() {
       <div className="grid gap-5 sm:grid-cols-2 sm:gap-6">
         <div>
           <Label htmlFor="vorname" required>Vorname</Label>
-          <Input id="vorname" name="vorname" autoComplete="given-name" required aria-invalid={!!err("vorname")} aria-describedby="vorname-error" />
+          <Input id="vorname" name="vorname" autoComplete="given-name" defaultValue={value("vorname")} required aria-invalid={!!err("vorname")} aria-describedby="vorname-error" />
           <FieldError id="vorname-error" message={err("vorname")} />
         </div>
         <div>
           <Label htmlFor="name" required>Name</Label>
-          <Input id="name" name="name" autoComplete="family-name" required aria-invalid={!!err("name")} aria-describedby="name-error" />
+          <Input id="name" name="name" autoComplete="family-name" defaultValue={value("name")} required aria-invalid={!!err("name")} aria-describedby="name-error" />
           <FieldError id="name-error" message={err("name")} />
         </div>
       </div>
@@ -57,19 +69,19 @@ export function ContactForm() {
       <div className="grid gap-5 sm:grid-cols-2 sm:gap-6">
         <div>
           <Label htmlFor="telefon" required>Telefon</Label>
-          <Input id="telefon" name="telefon" type="tel" autoComplete="tel" required aria-invalid={!!err("telefon")} aria-describedby="telefon-error" />
+          <Input id="telefon" name="telefon" type="tel" autoComplete="tel" defaultValue={value("telefon")} required aria-invalid={!!err("telefon")} aria-describedby="telefon-error" />
           <FieldError id="telefon-error" message={err("telefon")} />
         </div>
         <div>
           <Label htmlFor="email" required>E-Mail</Label>
-          <Input id="email" name="email" type="email" autoComplete="email" required aria-invalid={!!err("email")} aria-describedby="email-error" />
+          <Input id="email" name="email" type="email" autoComplete="email" defaultValue={value("email")} required aria-invalid={!!err("email")} aria-describedby="email-error" />
           <FieldError id="email-error" message={err("email")} />
         </div>
       </div>
 
       <div>
         <Label htmlFor="message" required>Ihre Nachricht</Label>
-        <Textarea id="message" name="message" required aria-invalid={!!err("message")} aria-describedby="message-error" />
+        <Textarea id="message" name="message" defaultValue={value("message")} required aria-invalid={!!err("message")} aria-describedby="message-error" />
         <FieldError id="message-error" message={err("message")} />
       </div>
 
@@ -77,7 +89,13 @@ export function ContactForm() {
         <p className="mb-2 text-sm font-medium text-forest-900">
           Einwilligung und Datenschutz <span className="text-red-700" aria-hidden="true">*</span>
         </p>
-        <Checkbox id="consent" name="consent" invalid={!!err("consent")} describedBy="consent-error">
+        <Checkbox
+          id="consent"
+          name="consent"
+          defaultChecked={state.values?.consent === "on"}
+          invalid={!!err("consent")}
+          describedBy="consent-error"
+        >
           Ich willige ein, dass meine Angaben zur Kontaktaufnahme und Zuordnung für eventuelle Rückfragen, so lange wie
           es für den jeweiligen Zweck erforderlich ist, gespeichert werden. Diese Einwilligung können Sie jederzeit mit
           Wirkung für die Zukunft widerrufen, indem Sie eine E-Mail an uns schicken. Die{" "}

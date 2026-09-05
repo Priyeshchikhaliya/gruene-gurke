@@ -5,7 +5,7 @@ import { sendReservationEmails } from "@/lib/email/resend";
 import { isSupabaseConfigured } from "@/lib/env";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { FormState } from "./types";
-import { firstFieldErrors, isHoneypotTripped, todayInBerlin } from "./utils";
+import { firstFieldErrors, isHoneypotTripped, submittedValues, todayInBerlin } from "./utils";
 
 const schema = z
   .object({
@@ -27,6 +27,8 @@ const schema = z
 export type ReservationField = keyof z.infer<typeof schema>;
 export type ReservationState = FormState<ReservationField>;
 
+const FIELDS = ["name", "email", "phone", "guests", "date", "time", "message", "consent"] as const;
+
 export async function createReservation(
   _prev: ReservationState,
   formData: FormData,
@@ -35,7 +37,11 @@ export async function createReservation(
 
   const parsed = schema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) {
-    return { status: "error", fieldErrors: firstFieldErrors<ReservationField>(parsed.error) };
+    return {
+      status: "error",
+      fieldErrors: firstFieldErrors<ReservationField>(parsed.error),
+      values: submittedValues(formData, FIELDS),
+    };
   }
 
   const data = parsed.data;
@@ -58,6 +64,7 @@ export async function createReservation(
       return {
         status: "error",
         formError: "Das hat leider nicht geklappt. Bitte versuchen Sie es erneut oder rufen Sie uns an.",
+        values: submittedValues(formData, FIELDS),
       };
     }
   }

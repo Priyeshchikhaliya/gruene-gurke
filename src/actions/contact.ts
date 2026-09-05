@@ -6,7 +6,7 @@ import { sendContactEmail } from "@/lib/email/resend";
 import { isSupabaseConfigured } from "@/lib/env";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { FormState } from "./types";
-import { firstFieldErrors, isHoneypotTripped } from "./utils";
+import { firstFieldErrors, isHoneypotTripped, submittedValues } from "./utils";
 
 const schema = z.object({
   anrede: z.enum(anredeOptions, "Bitte wählen Sie eine Anrede."),
@@ -21,6 +21,8 @@ const schema = z.object({
 export type ContactField = keyof z.infer<typeof schema>;
 export type ContactState = FormState<ContactField>;
 
+const FIELDS = ["anrede", "vorname", "name", "telefon", "email", "message", "consent"] as const;
+
 export async function sendContactMessage(
   _prev: ContactState,
   formData: FormData,
@@ -29,7 +31,11 @@ export async function sendContactMessage(
 
   const parsed = schema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) {
-    return { status: "error", fieldErrors: firstFieldErrors<ContactField>(parsed.error) };
+    return {
+      status: "error",
+      fieldErrors: firstFieldErrors<ContactField>(parsed.error),
+      values: submittedValues(formData, FIELDS),
+    };
   }
 
   const { anrede, vorname, name, telefon, email, message } = parsed.data;
@@ -47,6 +53,7 @@ export async function sendContactMessage(
       return {
         status: "error",
         formError: "Das hat leider nicht geklappt. Bitte versuchen Sie es erneut oder rufen Sie uns an.",
+        values: submittedValues(formData, FIELDS),
       };
     }
   }
