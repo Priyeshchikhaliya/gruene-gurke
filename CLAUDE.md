@@ -24,7 +24,14 @@ Zod 4, `motion`. Deployment auf Vercel. Paketmanager: npm.
   `font-display`, `font-sans`, `container-site`). Keine rohen Hex-Werte in Komponenten.
 - Einblendungen mit `<FadeIn>` (CSS-Klasse `.reveal`), nie mit Inline-Styles aus Motion –
   sonst gibt es Hydration-Konflikte.
-- Schemaänderungen als neue Datei `supabase/migrations/NNNN_*.sql` plus `database.types.ts`.
+- Inhalte der Website immer über `src/lib/data/content.ts` lesen. Diese Funktionen fallen
+  auf die Dateien in `src/lib` zurück, wenn Supabase fehlt – die Seite darf nie leer sein.
+- Der Verwaltungsbereich liegt unter `src/app/admin/(geschuetzt)`, ist `force-dynamic` und
+  prüft die Rechte mit `requireAdmin()`. Schreibende Aktionen liegen in `src/actions/admin/`
+  und nutzen den an die Sitzung gebundenen Client, damit RLS greift.
+- Nach jeder Änderung im Verwaltungsbereich `revalidatePublic()` aufrufen.
+- Schemaänderungen als neue Datei `supabase/migrations/NNNN_*.sql` plus `database.types.ts`,
+  danach `npm run seed:generate`.
 - Barrierefreiheit ist Pflicht: Labels, `aria-invalid`, Fokuszustände, `prefers-reduced-motion`.
 - Responsiv ab 320 px prüfen; kein horizontales Scrollen.
 

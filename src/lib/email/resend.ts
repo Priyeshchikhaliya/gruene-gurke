@@ -1,15 +1,8 @@
 import "server-only";
 
 import { Resend } from "resend";
-import { serverEnv } from "@/lib/env";
+import { resendConfig } from "@/lib/env";
 import { siteConfig } from "@/lib/site";
-
-let client: Resend | undefined;
-
-function resend() {
-  if (!client) client = new Resend(serverEnv().RESEND_API_KEY);
-  return client;
-}
 
 function escapeHtml(value: string) {
   return value
@@ -23,15 +16,15 @@ function rows(entries: Array<[string, string]>) {
   return entries
     .map(
       ([k, v]) =>
-        `<tr><td style="padding:6px 12px 6px 0;color:#6b6a62">${escapeHtml(k)}</td><td style="padding:6px 0">${escapeHtml(v)}</td></tr>`,
+        `<tr><td style="padding:6px 12px 6px 0;color:#6b6a62;white-space:nowrap">${escapeHtml(k)}</td><td style="padding:6px 0">${escapeHtml(v)}</td></tr>`,
     )
     .join("");
 }
 
 function shell(title: string, body: string) {
-  return `<!doctype html><html><body style="margin:0;background:#fbf9f4;font-family:ui-sans-serif,system-ui,sans-serif;color:#1a1a17">
+  return `<!doctype html><html lang="de"><body style="margin:0;background:#fbf9f4;font-family:ui-sans-serif,system-ui,sans-serif;color:#1a1a17">
   <div style="max-width:560px;margin:0 auto;padding:32px 20px">
-    <p style="margin:0 0 24px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#1d3728">${escapeHtml(siteConfig.name)}</p>
+    <p style="margin:0 0 24px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#174237">${escapeHtml(siteConfig.name)}</p>
     <h1 style="margin:0 0 16px;font-size:24px;font-weight:600">${escapeHtml(title)}</h1>
     ${body}
     <p style="margin:32px 0 0;font-size:12px;color:#8b8a82">${escapeHtml(siteConfig.address.street)}, ${escapeHtml(siteConfig.address.postalCode)} ${escapeHtml(siteConfig.address.city)} · ${escapeHtml(siteConfig.phone.display)}</p>
@@ -48,9 +41,14 @@ export type ReservationEmailInput = {
   message?: string;
 };
 
-/** Notifies the restaurant and sends the guest an acknowledgement. */
+/** Benachrichtigt das Restaurant und bestätigt dem Gast den Eingang. */
 export async function sendReservationEmails(input: ReservationEmailInput) {
-  const env = serverEnv();
+  const config = resendConfig();
+  if (!config) {
+    console.warn("[e-mail] Resend ist nicht eingerichtet, es wurde nichts versendet.");
+    return;
+  }
+  const resend = new Resend(config.apiKey);
   const details = rows([
     ["Name", input.name],
     ["E-Mail", input.email],
@@ -61,16 +59,16 @@ export async function sendReservationEmails(input: ReservationEmailInput) {
     ...(input.message ? [["Anmerkungen", input.message] as [string, string]] : []),
   ]);
 
-  await resend().batch.send([
+  await resend.batch.send([
     {
-      from: env.RESEND_FROM_EMAIL,
-      to: env.RESTAURANT_INBOX_EMAIL,
+      from: config.from,
+      to: config.inbox,
       replyTo: input.email,
       subject: `Reservierung: ${input.name} · ${input.date} ${input.time} · ${input.guests} P.`,
       html: shell("Neue Reservierungsanfrage", `<table style="border-collapse:collapse">${details}</table>`),
     },
     {
-      from: env.RESEND_FROM_EMAIL,
+      from: config.from,
       to: input.email,
       subject: `Ihre Reservierungsanfrage bei ${siteConfig.name}`,
       html: shell(
@@ -89,10 +87,15 @@ export type ContactEmailInput = {
 };
 
 export async function sendContactEmail(input: ContactEmailInput) {
-  const env = serverEnv();
-  await resend().emails.send({
-    from: env.RESEND_FROM_EMAIL,
-    to: env.RESTAURANT_INBOX_EMAIL,
+  const config = resendConfig();
+  if (!config) {
+    console.warn("[e-mail] Resend ist nicht eingerichtet, es wurde nichts versendet.");
+    return;
+  }
+  const resend = new Resend(config.apiKey);
+  await resend.emails.send({
+    from: config.from,
+    to: config.inbox,
     replyTo: input.email,
     subject: `Kontaktanfrage: ${input.name}`,
     html: shell(

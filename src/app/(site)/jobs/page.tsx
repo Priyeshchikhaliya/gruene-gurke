@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Check, Mail } from "lucide-react";
 import { buttonStyles } from "@/components/ui/button";
 import { Eyebrow, Section } from "@/components/ui/section";
+import { getJobs, getSettings } from "@/lib/data/content";
 import { routes } from "@/lib/routes";
 import { siteConfig } from "@/lib/site";
 
@@ -13,36 +14,31 @@ export const metadata: Metadata = {
   alternates: { canonical: routes.jobs },
 };
 
-const benefits = [
-  "5-Tage-Woche",
-  "Gutes Grundgehalt",
-  "Jahresurlaubsplanung",
-  "Feiertagszuschläge",
-  "Überstundenvergütung",
-];
+export const revalidate = 600;
 
-export default function JobsPage() {
+export default async function JobsPage() {
+  const [jobs, settings] = await Promise.all([getJobs(), getSettings()]);
   return (
     <Section>
       <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-20">
         <div>
           <Eyebrow>Aktuelle Jobangebote</Eyebrow>
           <h1 className="font-display text-4xl leading-[1.05] text-forest-900 text-balance sm:text-5xl md:text-6xl">
-            Wir suchen Verstärkung für unser Team!
+            {settings.jobs_intro}
           </h1>
 
           <ul className="mt-10 divide-y divide-border border-y border-border">
-            {["Koch (w/m/d)", "Beikoch (w/m/d)"].map((role) => (
-              <li key={role} className="flex flex-col gap-1 py-5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
-                <span className="font-display text-2xl text-forest-900 sm:text-3xl">{role}</span>
-                <span className="text-sm text-muted">ab sofort in Vollzeit / Teilzeit / Pauschal</span>
+            {jobs.postings.map((role) => (
+              <li key={role.title} className="flex flex-col gap-1 py-5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
+                <span className="font-display text-2xl text-forest-900 sm:text-3xl">{role.title}</span>
+                <span className="text-sm text-muted">{role.terms}</span>
               </li>
             ))}
           </ul>
 
           <h2 className="mt-10 text-xs font-medium uppercase tracking-[0.2em] text-forest-700">Wir bieten</h2>
           <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-            {benefits.map((benefit) => (
+            {jobs.benefits.map((benefit) => (
               <li key={benefit} className="flex items-center gap-3 text-forest-900">
                 <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-sage-100 text-forest-800">
                   <Check className="h-4 w-4" />
@@ -61,10 +57,8 @@ export default function JobsPage() {
               </a>{" "}
               oder an:
             </p>
-            <address className="mt-3 text-sm not-italic leading-relaxed text-ink-700">
-              {siteConfig.legalName}
-              <br />
-              Friedrich-August-Str. 1, 38889 Blankenburg
+            <address className="mt-3 whitespace-pre-line text-sm not-italic leading-relaxed text-ink-700">
+              {settings.jobs_application_address}
             </address>
             <a href={`mailto:${siteConfig.email}`} className={buttonStyles({ className: "mt-6 w-full sm:w-fit" })}>
               <Mail className="h-4 w-4" /> Per E-Mail bewerben

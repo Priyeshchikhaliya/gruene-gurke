@@ -2,11 +2,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { HoursCompact } from "@/components/ui/hours-table";
+import { getSeasons } from "@/lib/data/content";
 import { navLinks, routes } from "@/lib/routes";
 import { siteConfig } from "@/lib/site";
 
-export function Footer() {
+export async function Footer() {
   const year = new Date().getFullYear();
+  const seasons = await getSeasons();
 
   return (
     <footer className="mt-auto bg-forest-950 text-cream-100">
@@ -50,7 +52,7 @@ export function Footer() {
         <div>
           <p className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-gold-400">Öffnungszeiten</p>
           <p className="mb-3 text-sm text-cream-200/80">Täglich ab 11 Uhr geöffnet</p>
-          <HoursCompact className="text-cream-200/80" />
+          <HoursCompact seasons={seasons} className="text-cream-200/80" />
         </div>
 
         <nav aria-label="Fußzeile">

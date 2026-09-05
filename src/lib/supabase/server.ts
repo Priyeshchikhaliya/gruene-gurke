@@ -1,33 +1,31 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { supabasePublicConfig } from "@/lib/env";
 import type { Database } from "./database.types";
 
 /**
- * Server Component / Server Action / Route Handler client bound to the
- * request cookies. Uses the anon key + the visitor's session, so RLS applies.
+ * An die Request-Cookies gebundener Client für den Verwaltungsbereich.
+ * Nutzt den Anon-Key plus die Sitzung des Nutzers, es gilt also RLS.
  */
 export async function createClient() {
+  const config = supabasePublicConfig();
+  if (!config) return null;
+
   const cookieStore = await cookies();
 
-  return createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options),
-            );
-          } catch {
-            // Called from a Server Component: cookies are read-only there.
-            // The proxy refreshes sessions, so this is safe to ignore.
-          }
-        },
+  return createServerClient<Database>(config.url, config.anonKey, {
+    cookies: {
+      getAll() {
+        return cookieStore.getAll();
+      },
+      setAll(cookiesToSet) {
+        try {
+          cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
+        } catch {
+          // In Server Components sind Cookies schreibgeschützt. Die Sitzung
+          // wird im Proxy aufgefrischt, daher ist das hier unkritisch.
+        }
       },
     },
-  );
+  });
 }

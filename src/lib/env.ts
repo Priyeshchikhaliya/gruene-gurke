@@ -1,31 +1,51 @@
-import { z } from "zod";
+import "server-only";
+
+const PLACEHOLDER = /YOUR-PROJECT|example\.com|^$/;
+
+function clean(value: string | undefined) {
+  const trimmed = value?.trim();
+  if (!trimmed || PLACEHOLDER.test(trimmed)) return undefined;
+  return trimmed;
+}
 
 /**
- * Server-only environment. Parsed lazily so `next build` succeeds without
- * secrets; a clear error is thrown the first time a server action needs them.
+ * Supabase ist optional: Solange keine Zugangsdaten hinterlegt sind, läuft die
+ * Website mit den mitgelieferten Inhalten aus `src/lib`. Sobald die Schlüssel
+ * in `.env.local` stehen, kommen die Inhalte aus der Datenbank.
  */
-const serverSchema = z.object({
-  NEXT_PUBLIC_SUPABASE_URL: z.url(),
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
-  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
-  RESEND_API_KEY: z.string().min(1),
-  RESEND_FROM_EMAIL: z.string().min(3).default("Grüne Gurke <onboarding@resend.dev>"),
-  RESTAURANT_INBOX_EMAIL: z.email(),
-});
+export function supabasePublicConfig() {
+  const url = clean(process.env.NEXT_PUBLIC_SUPABASE_URL);
+  const anonKey = clean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+  if (!url || !anonKey) return null;
+  return { url, anonKey };
+}
 
-export type ServerEnv = z.infer<typeof serverSchema>;
+export function supabaseServiceConfig() {
+  const base = supabasePublicConfig();
+  const serviceKey = clean(process.env.SUPABASE_SERVICE_ROLE_KEY);
+  if (!base || !serviceKey) return null;
+  return { ...base, serviceKey };
+}
 
-let cached: ServerEnv | undefined;
+export function isSupabaseConfigured() {
+  return supabasePublicConfig() !== null;
+}
 
-export function serverEnv(): ServerEnv {
-  if (cached) return cached;
-  const result = serverSchema.safeParse(process.env);
-  if (!result.success) {
-    const missing = Object.keys(z.flattenError(result.error).fieldErrors);
+/** Wirft mit klarer Meldung – für Stellen, die ohne Datenbank nicht arbeiten können. */
+export function requireSupabaseService() {
+  const config = supabaseServiceConfig();
+  if (!config) {
     throw new Error(
-      `Missing or invalid environment variables: ${missing.join(", ")}. See .env.example.`,
+      "Supabase ist nicht eingerichtet. Bitte NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY und SUPABASE_SERVICE_ROLE_KEY in .env.local eintragen.",
     );
   }
-  cached = result.data;
-  return cached;
+  return config;
+}
+
+export function resendConfig() {
+  const apiKey = clean(process.env.RESEND_API_KEY);
+  const from = clean(process.env.RESEND_FROM_EMAIL) ?? "Grüne Gurke <onboarding@resend.dev>";
+  const inbox = clean(process.env.RESTAURANT_INBOX_EMAIL);
+  if (!apiKey || !inbox) return null;
+  return { apiKey, from, inbox };
 }

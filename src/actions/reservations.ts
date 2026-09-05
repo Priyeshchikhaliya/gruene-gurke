@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { sendReservationEmails } from "@/lib/email/resend";
+import { isSupabaseConfigured } from "@/lib/env";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { FormState } from "./types";
 import { firstFieldErrors, isHoneypotTripped, todayInBerlin } from "./utils";
@@ -39,25 +40,26 @@ export async function createReservation(
 
   const data = parsed.data;
 
-  try {
-    const supabase = createAdminClient();
-    const { error } = await supabase.from("reservations").insert({
-      name: data.name,
-      email: data.email,
-      phone: data.phone,
-      guests: data.guests,
-      reserved_date: data.date,
-      reserved_time: data.time,
-      message: data.message || null,
-      locale: "de",
-    });
-    if (error) throw error;
-  } catch (err) {
-    console.error("[reservations] insert failed", err);
-    return {
-      status: "error",
-      formError: "Das hat leider nicht geklappt. Bitte versuchen Sie es erneut oder rufen Sie uns an.",
-    };
+  if (isSupabaseConfigured()) {
+    try {
+      const supabase = createAdminClient();
+      const { error } = await supabase.from("reservations").insert({
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        guests: data.guests,
+        reserved_date: data.date,
+        reserved_time: data.time,
+        message: data.message || null,
+      });
+      if (error) throw error;
+    } catch (err) {
+      console.error("[reservierung] Speichern fehlgeschlagen", err);
+      return {
+        status: "error",
+        formError: "Das hat leider nicht geklappt. Bitte versuchen Sie es erneut oder rufen Sie uns an.",
+      };
+    }
   }
 
   // Anfrage ist gespeichert; eine fehlgeschlagene Benachrichtigung darf den Gast nicht scheitern lassen.
@@ -72,7 +74,7 @@ export async function createReservation(
       message: data.message,
     });
   } catch (err) {
-    console.error("[reservations] email failed", err);
+    console.error("[reservierung] E-Mail fehlgeschlagen", err);
   }
 
   return { status: "success" };

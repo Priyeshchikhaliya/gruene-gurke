@@ -51,12 +51,14 @@ export function Checkbox({
   children,
   invalid,
   describedBy,
+  defaultChecked,
 }: {
   id: string;
   name: string;
   children: ReactNode;
   invalid?: boolean;
   describedBy?: string;
+  defaultChecked?: boolean;
 }) {
   return (
     <label htmlFor={id} className="flex cursor-pointer gap-3 text-sm leading-relaxed text-ink-700">
@@ -65,6 +67,7 @@ export function Checkbox({
         name={name}
         type="checkbox"
         value="on"
+        defaultChecked={defaultChecked}
         aria-invalid={invalid}
         aria-describedby={describedBy}
         className="mt-1 h-4 w-4 shrink-0 accent-forest-800"

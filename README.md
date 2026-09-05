@@ -34,6 +34,7 @@ Danach das Datenbankschema einspielen – siehe [`supabase/README.md`](supabase/
 | `npm run build` | Produktionsbuild                     |
 | `npm run start` | Produktionsbuild ausliefern          |
 | `npm run lint`  | ESLint                               |
+| `npm run seed:generate` | `supabase/seed.sql` aus `src/lib` neu erzeugen |
 
 ## Seiten
 
@@ -47,7 +48,18 @@ Danach das Datenbankschema einspielen – siehe [`supabase/README.md`](supabase/
 | `/kontakt`         | Kontaktdaten, Formular, Karte                      |
 | `/reservierung`    | Tischanfrage                                       |
 | `/impressum`, `/datenschutz` | Rechtstexte                              |
-| `/admin`           | Platzhalter für den Verwaltungsbereich             |
+| `/admin`           | Verwaltungsbereich, nur mit Anmeldung              |
+
+## Verwaltungsbereich
+
+Unter `/admin` pflegt das Restaurant seine Inhalte selbst: Öffnungszeiten,
+Speisekarte mit Preisen, Galerie, Jobs, wiederkehrende Texte sowie die
+eingegangenen Reservierungen und Nachrichten. Die Anmeldung läuft über Supabase
+Auth mit E-Mail und Passwort; freigeschaltet ist nur, wer in der Tabelle
+`admin_users` steht. Einrichtung siehe [`supabase/README.md`](supabase/README.md).
+
+Ohne Datenbank bleibt die Website vollständig sichtbar – sie greift dann auf die
+mitgelieferten Inhalte in `src/lib` zurück.
 
 ## Projektstruktur
 
@@ -68,6 +80,7 @@ src/
     seo/          JSON-LD
     ui/           Buttons, Felder, Abschnitte, Karte, Öffnungszeiten
   lib/
+    data/         Inhalte lesen: content.ts (Website), admin.ts (Verwaltung)
     menu.ts       Speisekarte aus dem PDF, Preise in Cent
     gallery.ts    Bilder mit Alternativtexten
     hours.ts      Saisonale Öffnungszeiten
@@ -75,10 +88,13 @@ src/
     routes.ts     Alle Pfade und die Hauptnavigation
     site.ts       Adresse, Telefon, Social, Bilder
     env.ts        Geprüfte Server-Umgebung
-    supabase/     Browser-, Server- und Service-Role-Client
+    supabase/     Browser-, Server-, Public- und Service-Role-Client
+    auth.ts       Anmeldung und Rechteprüfung für die Verwaltung
     email/        Resend-Vorlagen
+  actions/admin/  Server Actions des Verwaltungsbereichs
 supabase/
   migrations/     SQL-Schema mit RLS und Storage-Policies
+  seed.sql        Startinhalte, erzeugt aus src/lib
 ```
 
 ## Datenfluss
@@ -86,12 +102,13 @@ supabase/
 - **Reservierung und Kontakt**: Formular → Server Action → Zod-Prüfung → Insert mit dem
   Service-Role-Client → Resend-Benachrichtigung. Der Anon-Key darf nicht schreiben, das
   öffentliche API taugt also nicht zum Spammen.
-- **Inhalte** (Karte, Zeiten, Galerie) liegen derzeit in `src/lib/` und ziehen später in
-  Supabase um, sobald der Verwaltungsbereich steht.
+- **Inhalte** (Karte, Zeiten, Galerie, Jobs, Texte) kommen aus Supabase. Schlägt eine
+  Abfrage fehl oder fehlen die Zugangsdaten, greifen die Inhalte aus `src/lib`.
+- **Öffentliche Seiten** sind statisch und werden alle zehn Minuten sowie nach jedem
+  Speichern im Verwaltungsbereich neu erzeugt.
 
 ## Offene Punkte
 
-- Verwaltungsbereich mit Supabase Auth.
 - Bilder in besserer Auflösung vom Betreiber; aktuell die Dateien der bisherigen Website.
 - Die Datenschutzerklärung stammt von der alten Seite und muss vor dem Livegang an den
   neuen Stack angepasst werden (Vercel, Supabase, Resend, selbst gehostete Schriften).

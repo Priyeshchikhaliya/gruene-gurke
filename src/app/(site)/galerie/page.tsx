@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { GalleryGrid } from "@/components/gallery/gallery-grid";
 import { CtaBand } from "@/components/ui/cta-band";
 import { Section, SectionHeading } from "@/components/ui/section";
-import { galleryByCategory } from "@/lib/gallery";
+import { getGallery, getSettings } from "@/lib/data/content";
 import { routes } from "@/lib/routes";
 
 export const metadata: Metadata = {
@@ -12,16 +12,22 @@ export const metadata: Metadata = {
   alternates: { canonical: routes.gallery },
 };
 
-export default function GalleryPage() {
+export const revalidate = 600;
+
+export default async function GalleryPage() {
+  const [photos, settings] = await Promise.all([getGallery(), getSettings()]);
+
   const toGrid = (category: "restaurant" | "catering") =>
-    galleryByCategory(category).map((img) => ({ src: img.src, width: img.width, height: img.height, alt: img.alt }));
+    photos
+      .filter((img) => img.category === category)
+      .map((img) => ({ src: img.url, width: img.width ?? 1200, height: img.height ?? 900, alt: img.alt }));
 
   return (
     <>
       <Section className="pb-4 sm:pb-6">
         <SectionHeading
           title="Galerie – Grüne Gurke"
-          intro="Feiern Sie doch mal bei uns! Oder nutzen Sie unseren Partyservice! Wir beraten Sie gern und können Ihnen aus einem reichhaltigen Sortiment ein maßgeschneidertes Angebot erstellen."
+          intro={`Feiern Sie doch mal bei uns! Oder nutzen Sie unseren Partyservice! ${settings.events_intro}`}
         />
       </Section>
 

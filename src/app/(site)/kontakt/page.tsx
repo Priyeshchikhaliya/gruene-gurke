@@ -4,6 +4,7 @@ import { ContactForm } from "@/components/forms/contact-form";
 import { ConsentMap } from "@/components/ui/consent-map";
 import { HoursCompact } from "@/components/ui/hours-table";
 import { Eyebrow, Section, SectionHeading } from "@/components/ui/section";
+import { getSeasons, getSettings } from "@/lib/data/content";
 import { routes } from "@/lib/routes";
 import { siteConfig } from "@/lib/site";
 
@@ -14,14 +15,15 @@ export const metadata: Metadata = {
   alternates: { canonical: routes.contact },
 };
 
-export default function ContactPage() {
+export const revalidate = 600;
+
+export default async function ContactPage() {
+  const [seasons, settings] = await Promise.all([getSeasons(), getSettings()]);
+
   return (
     <>
       <Section className="pb-6 sm:pb-8">
-        <SectionHeading
-          title="Kontakt"
-          intro="Wir beraten Sie gern und können Ihnen aus einem reichhaltigen Sortiment ein maßgeschneidertes Angebot erstellen. Sie brauchen sich nur zu entscheiden und die Feier kann starten, um den Rest kümmern wir uns!"
-        />
+        <SectionHeading title="Kontakt" intro={settings.events_intro} />
       </Section>
 
       <Section className="pt-6 sm:pt-8">
@@ -85,7 +87,7 @@ export default function ContactPage() {
             <div className="mt-8 rounded-2xl bg-cream-100 p-5 sm:p-6">
               <p className="text-xs uppercase tracking-[0.2em] text-forest-700">Öffnungszeiten</p>
               <p className="mt-2 text-sm text-forest-900">Täglich ab 11 Uhr geöffnet</p>
-              <HoursCompact className="mt-3 text-ink-700" />
+              <HoursCompact seasons={seasons} className="mt-3 text-ink-700" />
             </div>
           </div>
 

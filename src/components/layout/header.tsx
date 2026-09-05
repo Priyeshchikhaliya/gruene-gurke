@@ -3,15 +3,17 @@ import Link from "next/link";
 import { Phone } from "lucide-react";
 import { buttonStyles } from "@/components/ui/button";
 import { navLinks, routes } from "@/lib/routes";
+import { getSettings } from "@/lib/data/content";
 import { siteConfig } from "@/lib/site";
 import { MobileNav } from "./mobile-nav";
 
-export function Header() {
+export async function Header() {
+  const settings = await getSettings();
   return (
     <header className="sticky top-0 z-50 border-b border-border/70 bg-cream-50/90 backdrop-blur-md">
       {/* The running order line from the current site, kept as a thin banner. */}
       <p className="bg-forest-800 px-4 py-2 text-center text-[11px] font-medium tracking-wide text-cream-50 sm:text-xs">
-        Bestellungen und Reservierungen unter{" "}
+        {settings.banner_text}{" "}
         <a href={siteConfig.phone.href} className="underline underline-offset-2 hover:text-gold-400">
           {siteConfig.phone.display}
         </a>

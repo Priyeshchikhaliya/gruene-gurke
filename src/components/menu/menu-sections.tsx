@@ -1,5 +1,5 @@
 import { Fish, Leaf, Star } from "lucide-react";
-import { allergenLegend, formatPrice, menuCategories, type MenuItem, type MenuTag } from "@/lib/menu";
+import { formatPrice, type MenuCategory, type MenuItem, type MenuTag } from "@/lib/menu";
 import { cn } from "@/lib/utils";
 
 const tagIcon: Record<MenuTag, typeof Leaf> = { veg: Leaf, fish: Fish, chef: Star };
@@ -14,7 +14,13 @@ function minPrice(item: MenuItem) {
   return item.variants ? Math.min(...item.variants.map((v) => v.price)) : item.price;
 }
 
-export function MenuSections() {
+export function MenuSections({
+  categories,
+  allergens,
+}: {
+  categories: MenuCategory[];
+  allergens: Array<{ code: string; label: string }>;
+}) {
   return (
     <div className="container-site xl:grid xl:grid-cols-[15rem_1fr] xl:gap-16">
       {/* Kategorien: waagerechte Pillen auf kleinen Schirmen, feste Spalte ab xl */}
@@ -27,7 +33,7 @@ export function MenuSections() {
             Kategorien
           </p>
           <ul className="flex gap-2 xl:flex-col xl:gap-0">
-            {menuCategories.map((cat) => (
+            {categories.map((cat) => (
               <li key={cat.id} className="shrink-0">
                 <a
                   href={`#${cat.id}`}
@@ -42,7 +48,7 @@ export function MenuSections() {
       </nav>
 
       <div className="max-w-3xl space-y-12 sm:space-y-16">
-        {menuCategories.map((cat) => (
+        {categories.map((cat) => (
           <section key={cat.id} id={cat.id} className="scroll-mt-44 sm:scroll-mt-48 xl:scroll-mt-32">
             <header className="border-b border-forest-800/20 pb-4">
               <h2 className="font-display text-2xl text-forest-900 sm:text-3xl md:text-4xl">{cat.title}</h2>
@@ -112,7 +118,7 @@ export function MenuSections() {
             Die Kürzel hinter den Gerichten stehen für folgende Zusatzstoffe und Allergene:
           </p>
           <dl className="mt-5 grid grid-cols-1 gap-x-6 gap-y-2 text-sm min-[420px]:grid-cols-2 sm:grid-cols-3">
-            {allergenLegend.map((a) => (
+            {allergens.map((a) => (
               <div key={a.code} className="flex gap-2">
                 <dt className="w-6 shrink-0 font-medium text-forest-900">{a.code}</dt>
                 <dd className="text-ink-700">{a.label}</dd>

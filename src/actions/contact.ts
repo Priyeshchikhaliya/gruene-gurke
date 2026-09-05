@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { anredeOptions } from "@/lib/anrede";
 import { sendContactEmail } from "@/lib/email/resend";
+import { isSupabaseConfigured } from "@/lib/env";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { FormState } from "./types";
 import { firstFieldErrors, isHoneypotTripped } from "./utils";
@@ -34,24 +35,26 @@ export async function sendContactMessage(
   const { anrede, vorname, name, telefon, email, message } = parsed.data;
   const fullName = `${anrede} ${vorname} ${name}`;
 
-  try {
-    const supabase = createAdminClient();
-    const { error } = await supabase
-      .from("contact_messages")
-      .insert({ name: fullName, email, phone: telefon, message, locale: "de" });
-    if (error) throw error;
-  } catch (err) {
-    console.error("[contact] insert failed", err);
-    return {
-      status: "error",
-      formError: "Das hat leider nicht geklappt. Bitte versuchen Sie es erneut oder rufen Sie uns an.",
-    };
+  if (isSupabaseConfigured()) {
+    try {
+      const supabase = createAdminClient();
+      const { error } = await supabase
+        .from("contact_messages")
+        .insert({ name: fullName, email, phone: telefon, message });
+      if (error) throw error;
+    } catch (err) {
+      console.error("[kontakt] Speichern fehlgeschlagen", err);
+      return {
+        status: "error",
+        formError: "Das hat leider nicht geklappt. Bitte versuchen Sie es erneut oder rufen Sie uns an.",
+      };
+    }
   }
 
   try {
     await sendContactEmail({ name: fullName, email, phone: telefon, message });
   } catch (err) {
-    console.error("[contact] email failed", err);
+    console.error("[kontakt] E-Mail fehlgeschlagen", err);
   }
 
   return { status: "success" };

@@ -5,7 +5,7 @@ import { Phone } from "lucide-react";
 import { buttonStyles } from "@/components/ui/button";
 import { FadeIn } from "@/components/ui/fade-in";
 import { Eyebrow, Section, SectionHeading } from "@/components/ui/section";
-import { galleryImages } from "@/lib/gallery";
+import { getGallery, getSettings, type GalleryPhoto } from "@/lib/data/content";
 import { routes } from "@/lib/routes";
 import { siteConfig } from "@/lib/site";
 
@@ -16,33 +16,34 @@ export const metadata: Metadata = {
   alternates: { canonical: routes.events },
 };
 
-const pick = (srcs: string[]) => srcs.map((s) => galleryImages.find((i) => i.src === s)!);
-
-function Collage({ images }: { images: ReturnType<typeof pick> }) {
+function Collage({ images }: { images: GalleryPhoto[] }) {
   return (
     <div className="grid grid-cols-2 gap-3 md:gap-4">
       <div className="relative col-span-2 aspect-[16/10] overflow-hidden rounded-2xl">
-        <Image src={images[0].src} alt={images[0].alt} fill sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover" />
+        <Image src={images[0].url} alt={images[0].alt} fill sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover" />
       </div>
       {images.slice(1).map((img) => (
-        <div key={img.src} className="relative aspect-[4/3] overflow-hidden rounded-2xl">
-          <Image src={img.src} alt={img.alt} fill sizes="(min-width: 1024px) 25vw, 50vw" className="object-cover" />
+        <div key={img.url} className="relative aspect-[4/3] overflow-hidden rounded-2xl">
+          <Image src={img.url} alt={img.alt} fill sizes="(min-width: 1024px) 25vw, 50vw" className="object-cover" />
         </div>
       ))}
     </div>
   );
 }
 
-export default function EventsPage() {
-  const rooms = pick(["/images/restaurant/room-31.jpg", "/images/restaurant/room-36.jpg", "/images/restaurant/terrace.jpg"]);
-  const catering = pick(["/images/catering/catering-22.jpg", "/images/catering/catering-20.jpg", "/images/catering/catering-32.jpg"]);
+export const revalidate = 600;
+
+export default async function EventsPage() {
+  const [photos, settings] = await Promise.all([getGallery(), getSettings()]);
+  const rooms = photos.filter((img) => img.category === "restaurant").slice(0, 3);
+  const catering = photos.filter((img) => img.category === "catering").slice(0, 3);
 
   return (
     <>
       <Section className="pb-6 sm:pb-8">
         <SectionHeading
           title="Feiern Sie doch mal bei uns! Oder nutzen Sie unseren Partyservice!"
-          intro="Wir beraten Sie gern und können Ihnen aus einem reichhaltigen Sortiment ein maßgeschneidertes Angebot erstellen. Sie brauchen sich nur zu entscheiden und die Feier kann starten, um den Rest kümmern wir uns!"
+          intro={settings.events_intro}
         />
       </Section>
 
@@ -57,9 +58,7 @@ export default function EventsPage() {
               Verschiedene Räume für Familien- und Betriebsfeiern etc.
             </p>
           </FadeIn>
-          <FadeIn delay={0.1}>
-            <Collage images={rooms} />
-          </FadeIn>
+          <FadeIn delay={0.1}>{rooms.length > 0 ? <Collage images={rooms} /> : null}</FadeIn>
         </div>
       </Section>
 
@@ -76,7 +75,7 @@ export default function EventsPage() {
             </p>
           </FadeIn>
           <FadeIn delay={0.1} className="lg:order-1">
-            <Collage images={catering} />
+            {catering.length > 0 ? <Collage images={catering} /> : null}
           </FadeIn>
         </div>
       </section>

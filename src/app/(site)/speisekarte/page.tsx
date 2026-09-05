@@ -4,6 +4,7 @@ import { MenuSections } from "@/components/menu/menu-sections";
 import { buttonStyles } from "@/components/ui/button";
 import { CtaBand } from "@/components/ui/cta-band";
 import { Section, SectionHeading } from "@/components/ui/section";
+import { getAllergens, getMenu, getMenuNotes, getSettings } from "@/lib/data/content";
 import { routes } from "@/lib/routes";
 import { siteConfig } from "@/lib/site";
 
@@ -14,23 +15,20 @@ export const metadata: Metadata = {
   alternates: { canonical: routes.menu },
 };
 
-/** Hinweise wortgleich aus der gedruckten Karte, Seite „Das sei noch angemerkt“. */
-const notes = [
-  "Alle Gerichte gibt es auch zum Mitnehmen.",
-  "Beilagenwechsel oder Extrawünsche kosten extra.",
-  "Die meisten Gerichte gibt es auch als Seniorenteller. Etwas kleinere Portionen, 1,90 € Preisnachlass.",
-  "Alle Preise verstehen sich incl. 19 % Mehrwertsteuer.",
-  "Wir haben täglich ab 11.00 Uhr geöffnet, mit Ausnahme von Heiligabend. Am 1. und 2. Weihnachtsfeiertag nur bis 15:00 Uhr.",
-];
+export const revalidate = 600;
 
-export default function MenuPage() {
+export default async function MenuPage() {
+  const [categories, allergens, notes, settings] = await Promise.all([
+    getMenu(),
+    getAllergens(),
+    getMenuNotes(),
+    getSettings(),
+  ]);
+
   return (
     <>
       <Section className="pb-8 sm:pb-10 md:pb-12">
-        <SectionHeading
-          title="Speisekarte"
-          intro="Suppen, Vorspeisen, Eiergerichte, Nudelgerichte, Salate, Geflügelgerichte, Fleischgerichte, Pfannengerichte, Schnitzelparadies, Dessert und Eis, Knabberzeug, Kindergerichte und Spargelgerichte."
-        />
+        <SectionHeading title="Speisekarte" intro={settings.menu_intro} />
         <div className="mt-8 grid gap-4 sm:mt-10 sm:gap-5 md:grid-cols-2">
           <a
             href={siteConfig.menuPdf}
@@ -57,10 +55,7 @@ export default function MenuPage() {
             </span>
             <div className="min-w-0">
               <p className="font-display text-xl sm:text-2xl">Essen bestellen in Wernigerode</p>
-              <p className="mt-1 text-sm text-cream-100/80">
-                Alle Gerichte und Getränke auch zum Abholen und Mitnehmen! Aufgrund der aktuellen Situation sind ggf.
-                nicht alle Gerichte verfügbar.
-              </p>
+              <p className="mt-1 text-sm text-cream-100/80">{settings.order_note}</p>
               <a
                 href={siteConfig.phone.href}
                 className={buttonStyles({ variant: "light", size: "sm", className: "mt-4 w-full sm:w-fit" })}
@@ -72,7 +67,7 @@ export default function MenuPage() {
         </div>
       </Section>
 
-      <MenuSections />
+      <MenuSections categories={categories} allergens={allergens} />
 
       <Section>
         <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr] lg:gap-6">
@@ -89,9 +84,7 @@ export default function MenuPage() {
           </div>
           <div className="rounded-2xl bg-cream-100 p-5 sm:p-6 md:p-8">
             <h2 className="font-display text-2xl text-forest-900">Hier steckt unsere Saisonkarte</h2>
-            <p className="mt-3 text-sm leading-relaxed text-muted">
-              …zur Osterzeit, …zur Spargelzeit, …zur Grünkohlzeit, …zur Weihnachtszeit. Lassen Sie sich überraschen!
-            </p>
+            <p className="mt-3 text-sm leading-relaxed text-muted">{settings.seasonal_menu_note}</p>
           </div>
         </div>
       </Section>

@@ -3,7 +3,7 @@
 import { createBrowserClient } from "@supabase/ssr";
 import type { Database } from "./database.types";
 
-/** Browser client. Uses the anon key; every query is subject to RLS. */
+/** Browser-Client für die Anmeldung. Anon-Key, alles unterliegt RLS. */
 export function createClient() {
   return createBrowserClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

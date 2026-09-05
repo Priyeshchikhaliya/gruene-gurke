@@ -8,7 +8,7 @@ import { CtaBand } from "@/components/ui/cta-band";
 import { FadeIn } from "@/components/ui/fade-in";
 import { HoursTable } from "@/components/ui/hours-table";
 import { Eyebrow, Section, SectionHeading } from "@/components/ui/section";
-import { galleryImages } from "@/lib/gallery";
+import { currentSeasonSlug, getGallery, getJobs, getSeasons, getSettings } from "@/lib/data/content";
 import { routes } from "@/lib/routes";
 import { siteConfig } from "@/lib/site";
 
@@ -21,9 +21,6 @@ const facts = [
   "Täglich ab 11 Uhr geöffnet",
 ];
 
-const menuCategoriesLine =
-  "Suppen, Vorspeisen, Eiergerichte, Nudelgerichte, Salate, Geflügelgerichte, Fleischgerichte, Pfannengerichte, Schnitzelparadies, Dessert und Eis, Knabberzeug, Kindergerichte und Spargelgerichte";
-
 const teaserSrcs = [
   "/images/restaurant/terrace.jpg",
   "/images/restaurant/room-42.jpg",
@@ -33,8 +30,20 @@ const teaserSrcs = [
   "/images/catering/catering-1.jpg",
 ];
 
-export default function HomePage() {
-  const teaser = teaserSrcs.map((src) => galleryImages.find((img) => img.src === src)!);
+export const revalidate = 600;
+
+export default async function HomePage() {
+  const [settings, seasons, gallery, jobs] = await Promise.all([
+    getSettings(),
+    getSeasons(),
+    getGallery(),
+    getJobs(),
+  ]);
+
+  // Teaser-Bilder: bevorzugt die gewünschten Motive, sonst einfach die ersten.
+  const preferred = teaserSrcs.map((src) => gallery.find((img) => img.url === src)).filter((img) => img !== undefined);
+  const teaser = (preferred.length >= 6 ? preferred : gallery).slice(0, 6);
+  const activeSeason = currentSeasonSlug(seasons);
 
   return (
     <>
@@ -124,7 +133,7 @@ export default function HomePage() {
           <FadeIn>
             <div className="flex h-full flex-col rounded-2xl border border-border bg-surface p-6 sm:p-8">
               <h2 className="font-display text-3xl text-forest-900 sm:text-4xl">Speisekarte</h2>
-              <p className="mt-4 text-sm leading-relaxed text-muted sm:text-base">{menuCategoriesLine}</p>
+              <p className="mt-4 text-sm leading-relaxed text-muted sm:text-base">{settings.menu_intro}</p>
               <p className="mt-4 text-sm leading-relaxed text-muted">
                 Die meisten Gerichte gibt es auch als Seniorenteller. Etwas kleinere Portionen, 1,90 € Preisnachlass.
                 Alle Preise verstehen sich incl. Mehrwertsteuer.
@@ -137,10 +146,7 @@ export default function HomePage() {
           <FadeIn delay={0.08}>
             <div className="flex h-full flex-col rounded-2xl bg-forest-800 p-6 text-cream-50 sm:p-8">
               <h2 className="font-display text-3xl sm:text-4xl">Essen bestellen in Wernigerode</h2>
-              <p className="mt-4 text-sm leading-relaxed text-cream-100/85 sm:text-base">
-                Alle Gerichte und Getränke auch zum Abholen und Mitnehmen! Aufgrund der aktuellen Situation sind ggf.
-                nicht alle Gerichte verfügbar.
-              </p>
+              <p className="mt-4 text-sm leading-relaxed text-cream-100/85 sm:text-base">{settings.order_note}</p>
               <a
                 href={siteConfig.phone.href}
                 className={buttonStyles({ variant: "light", className: "mt-8 w-full sm:w-fit" })}
@@ -163,7 +169,7 @@ export default function HomePage() {
             </h2>
           </FadeIn>
           <FadeIn delay={0.1}>
-            <HoursTable />
+            <HoursTable seasons={seasons} activeSlug={activeSeason} note={settings.hours_note} />
           </FadeIn>
         </div>
       </Section>
@@ -187,11 +193,11 @@ export default function HomePage() {
           </FadeIn>
           <ul className="mt-10 grid grid-cols-2 gap-3 sm:mt-12 md:grid-cols-3 md:gap-5">
             {teaser.map((img, i) => (
-              <li key={img.src} className={i === 0 ? "col-span-2 row-span-2" : ""}>
+              <li key={img.url} className={i === 0 ? "col-span-2 row-span-2" : ""}>
                 <FadeIn delay={i * 0.05} className="h-full">
                   <Link href={routes.gallery} className="group relative block h-full min-h-32 overflow-hidden rounded-xl sm:min-h-40">
                     <Image
-                      src={img.src}
+                      src={img.url}
                       alt={img.alt}
                       fill
                       sizes="(min-width: 768px) 33vw, 50vw"
@@ -211,12 +217,12 @@ export default function HomePage() {
           <div className="grid items-center gap-8 overflow-hidden rounded-3xl bg-cream-100 lg:grid-cols-2 lg:gap-10">
             <div className="p-6 sm:p-8 md:p-12">
               <Eyebrow>Aktuelle Jobangebote</Eyebrow>
-              <h2 className="font-display text-3xl leading-[1.1] text-forest-900 sm:text-4xl">
-                Wir suchen Verstärkung für unser Team!
-              </h2>
-              <p className="mt-4 text-muted">
-                Koch (w/m/d) und Beikoch (w/m/d) – ab sofort in Vollzeit / Teilzeit / Pauschal.
-              </p>
+              <h2 className="font-display text-3xl leading-[1.1] text-forest-900 sm:text-4xl">{settings.jobs_intro}</h2>
+              {jobs.postings.length > 0 ? (
+                <p className="mt-4 text-muted">
+                  {jobs.postings.map((job) => job.title).join(" und ")} – {jobs.postings[0].terms}.
+                </p>
+              ) : null}
               <Link href={routes.jobs} className={buttonStyles({ className: "mt-8 w-full sm:w-fit" })}>
                 Zu den Jobangeboten <ArrowRight className="h-4 w-4" />
               </Link>
