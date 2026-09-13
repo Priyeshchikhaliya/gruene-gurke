@@ -9,7 +9,7 @@
  * Die Datenschutzerklärung wurde neu geschrieben. Der alte Text beschrieb
  * Google Web Fonts und ein anderes Hosting; beides trifft auf diese Website
  * nicht mehr zu. Beschrieben ist jetzt, was tatsächlich passiert: Hosting bei
- * Vercel, Datenbank bei Supabase in Frankfurt, E-Mail-Versand über Resend,
+ * Vercel, Datenbank bei Supabase in Irland, E-Mail-Versand über Resend,
  * selbst ausgelieferte Schriften und eine Karte, die erst nach Zustimmung
  * geladen wird.
  */
@@ -151,7 +151,7 @@ export const datenschutz: LegalBlock[] = [
   { type: "h3", text: "Datenbank" },
   {
     type: "p",
-    text: "Die Inhalte dieser Website sowie Ihre Anfragen aus Kontaktformular und Reservierung speichern wir in einer Datenbank des Anbieters Supabase, Inc., 970 Toa Payoh North #07-04, Singapur 318992. Der von uns genutzte Serverstandort liegt in Frankfurt am Main, Deutschland. Ihre Formulardaten verlassen die Europäische Union hierbei nicht.",
+    text: "Die Inhalte dieser Website sowie Ihre Anfragen aus Kontaktformular und Reservierung speichern wir in einer Datenbank des Anbieters Supabase, Inc., 970 Toa Payoh North #07-04, Singapur 318992. Der von uns genutzte Serverstandort liegt in Irland. Ihre Formulardaten verlassen die Europäische Union hierbei nicht.",
   },
   {
     type: "p",

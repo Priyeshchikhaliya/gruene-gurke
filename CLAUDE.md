@@ -7,7 +7,7 @@ Website der Gaststätte „Grüne Gurke“ in Wernigerode. Demo, aber auf Produk
 
 ## Stack
 Next.js 16 App Router + TypeScript, Tailwind v4, Supabase (DB/Auth/Storage), Resend (E-Mail),
-Zod 4, `motion`. Deployment auf Vercel. Paketmanager: npm.
+Zod 4. Bewegung über CSS-Übergänge, keine Animationsbibliothek. Deployment auf Vercel. Paketmanager: npm.
 
 ## Regeln
 - **Inhalte nur aus echten Quellen.** Texte stammen von gruene-gurke.com bzw. aus
@@ -30,6 +30,8 @@ Zod 4, `motion`. Deployment auf Vercel. Paketmanager: npm.
   nur dann auf die Dateien in `src/lib` zurück, wenn Supabase gar nicht eingerichtet ist.
   Scheitert eine Abfrage, werfen sie – dann behält Next.js die letzte gute Fassung. Nie
   wieder still zurückfallen: das hat Änderungen aus der Verwaltung überschrieben.
+- Das Supabase-Projekt liegt in **eu-west-1 (Irland)**, nicht in Frankfurt. Die Datenschutzerklärung
+  (`src/lib/legal.ts`) nennt den Standort; wer die Region ändert, muss sie mitändern.
 - `/api/cron/keepalive` hält das kostenlose Supabase-Projekt wach (Vercel Cron, täglich).
   Nicht entfernen, solange das Projekt im Free-Tarif läuft.
 - Der Verwaltungsbereich liegt unter `src/app/admin/(geschuetzt)`, ist `force-dynamic` und

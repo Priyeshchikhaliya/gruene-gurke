@@ -7,7 +7,8 @@ alle Inhalte aus Supabase und lassen sich unter `/admin` bearbeiten.
 ## 1. Projekt anlegen
 
 1. Auf [supabase.com](https://supabase.com) ein neues Projekt erstellen
-   (Region: **Frankfurt (eu-central-1)**, wegen DSGVO und Ladezeit).
+   (Region in der EU, etwa **Frankfurt (eu-central-1)** oder **Irland (eu-west-1)**. Das Projekt
+   der Grünen Gurke läuft in Irland; die Datenschutzerklärung nennt diesen Standort).
 2. Ein sicheres Datenbank-Passwort vergeben und notieren.
 
 ## 2. Schlüssel eintragen
