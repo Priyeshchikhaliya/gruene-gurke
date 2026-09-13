@@ -14,9 +14,15 @@ import {
 } from "@/lib/seed-content";
 
 /**
- * Inhalte kommen aus Supabase, sobald es eingerichtet ist. Andernfalls – und
- * wenn eine Abfrage fehlschlägt – greifen die mitgelieferten Inhalte aus
- * `src/lib`. Die Website bleibt dadurch immer sichtbar.
+ * Inhalte kommen aus Supabase, sobald es eingerichtet ist. Nur wenn die
+ * Zugangsdaten fehlen oder eine Tabelle leer ist, greifen die mitgelieferten
+ * Inhalte aus `src/lib`.
+ *
+ * Scheitert dagegen eine Abfrage, wird geworfen. Das ist Absicht: Beim
+ * Neuaufbau einer Seite behält Next.js dann die zuletzt gute Fassung. Würden
+ * wir stattdessen still auf die mitgelieferten Inhalte zurückfallen, ersetzte
+ * ein kurzer Datenbankausfall jede Änderung aus der Verwaltung durch den
+ * Stand von damals – ohne dass es jemand merkt.
  */
 
 export type Season = {
@@ -49,16 +55,17 @@ const seasonFallback: Season[] = fallbackSeasons.map((s) => ({
   kitchenUntil: s.kitchenUntil,
 }));
 
-function warn(what: string, error: unknown) {
-  console.warn(`[inhalte] ${what} konnte nicht geladen werden, nutze Standardinhalte.`, error);
+function queryFailed(what: string, error: unknown): never {
+  console.error(`[inhalte] ${what} konnte nicht geladen werden.`, error);
+  throw new Error(`${what} konnte nicht aus der Datenbank geladen werden.`);
 }
 
 export const getSeasons = cache(async (): Promise<Season[]> => {
   const supabase = createPublicClient();
   if (!supabase) return seasonFallback;
   const { data, error } = await supabase.from("opening_seasons").select("*").order("sort_order");
-  if (error || !data?.length) {
-    if (error) warn("Öffnungszeiten", error);
+  if (error) queryFailed("Öffnungszeiten", error);
+  if (!data?.length) {
     return seasonFallback;
   }
   return data.map((row) => ({
@@ -96,12 +103,10 @@ export const getMenu = cache(async (): Promise<MenuCategory[]> => {
     supabase.from("menu_item_variants").select("*").order("sort_order"),
   ]);
 
-  if (categories.error || items.error || variants.error || !categories.data?.length) {
-    if (categories.error || items.error || variants.error) {
-      warn("Speisekarte", categories.error ?? items.error ?? variants.error);
-    }
-    return fallbackMenu;
+  if (categories.error || items.error || variants.error) {
+    queryFailed("Speisekarte", categories.error ?? items.error ?? variants.error);
   }
+  if (!categories.data?.length) return fallbackMenu;
 
   return categories.data.map((category) => ({
     id: category.slug,
@@ -134,8 +139,8 @@ export const getAllergens = cache(async (): Promise<Array<{ code: string; label:
   const supabase = createPublicClient();
   if (!supabase) return fallbackAllergens;
   const { data, error } = await supabase.from("allergens").select("*").order("sort_order");
-  if (error || !data?.length) {
-    if (error) warn("Allergene", error);
+  if (error) queryFailed("Allergene", error);
+  if (!data?.length) {
     return fallbackAllergens;
   }
   return data.map(({ code, label }) => ({ code, label }));
@@ -145,8 +150,8 @@ export const getMenuNotes = cache(async (): Promise<string[]> => {
   const supabase = createPublicClient();
   if (!supabase) return fallbackNotes;
   const { data, error } = await supabase.from("menu_notes").select("*").order("sort_order");
-  if (error || !data?.length) {
-    if (error) warn("Hinweise zur Karte", error);
+  if (error) queryFailed("Hinweise zur Karte", error);
+  if (!data?.length) {
     return fallbackNotes;
   }
   return data.map((row) => row.text);
@@ -168,8 +173,8 @@ export const getGallery = cache(async (): Promise<GalleryPhoto[]> => {
     .select("*")
     .eq("is_active", true)
     .order("sort_order");
-  if (error || !data?.length) {
-    if (error) warn("Galerie", error);
+  if (error) queryFailed("Galerie", error);
+  if (!data?.length) {
     return fallbackGallery.map((img) => ({
       url: img.src,
       alt: img.alt,
@@ -196,10 +201,7 @@ export const getJobs = cache(async (): Promise<{ postings: JobPosting[]; benefit
     supabase.from("job_postings").select("*").eq("is_active", true).order("sort_order"),
     supabase.from("job_benefits").select("*").order("sort_order"),
   ]);
-  if (postings.error || benefits.error) {
-    warn("Jobs", postings.error ?? benefits.error);
-    return fallback;
-  }
+  if (postings.error || benefits.error) queryFailed("Jobs", postings.error ?? benefits.error);
   return {
     postings: (postings.data ?? []).map((row) => ({ title: row.title, terms: row.terms ?? "" })),
     benefits: (benefits.data ?? []).map((row) => row.label),
@@ -214,8 +216,8 @@ export const getSettings = cache(async (): Promise<Settings> => {
   const supabase = createPublicClient();
   if (!supabase) return settingsFallback;
   const { data, error } = await supabase.from("site_settings").select("key, value");
-  if (error || !data?.length) {
-    if (error) warn("Texte", error);
+  if (error) queryFailed("Texte", error);
+  if (!data?.length) {
     return settingsFallback;
   }
   return { ...settingsFallback, ...Object.fromEntries(data.map((row) => [row.key, row.value])) };

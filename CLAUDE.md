@@ -27,7 +27,11 @@ Zod 4, `motion`. Deployment auf Vercel. Paketmanager: npm.
 - Kein `backdrop-filter` auf Elementen, die etwas mit `position: fixed` enthalten. Der Filter
   macht sie zum Bezugsrahmen, und das Overlay wird nur so groß wie das Elternelement.
 - Inhalte der Website immer über `src/lib/data/content.ts` lesen. Diese Funktionen fallen
-  auf die Dateien in `src/lib` zurück, wenn Supabase fehlt – die Seite darf nie leer sein.
+  nur dann auf die Dateien in `src/lib` zurück, wenn Supabase gar nicht eingerichtet ist.
+  Scheitert eine Abfrage, werfen sie – dann behält Next.js die letzte gute Fassung. Nie
+  wieder still zurückfallen: das hat Änderungen aus der Verwaltung überschrieben.
+- `/api/cron/keepalive` hält das kostenlose Supabase-Projekt wach (Vercel Cron, täglich).
+  Nicht entfernen, solange das Projekt im Free-Tarif läuft.
 - Der Verwaltungsbereich liegt unter `src/app/admin/(geschuetzt)`, ist `force-dynamic` und
   prüft die Rechte mit `requireAdmin()`. Schreibende Aktionen liegen in `src/actions/admin/`
   und nutzen den an die Sitzung gebundenen Client, damit RLS greift.

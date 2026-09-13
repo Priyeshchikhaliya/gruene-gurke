@@ -55,7 +55,17 @@ export async function createReservation(
 
   // Gegen die hinterlegten Öffnungszeiten prüfen. Der Browser schlägt nur
   // gültige Zeiten vor; verlassen darf man sich darauf nicht.
-  const seasons = await getSeasons();
+  let seasons: Awaited<ReturnType<typeof getSeasons>>;
+  try {
+    seasons = await getSeasons();
+  } catch (err) {
+    console.error("[reservierung] Öffnungszeiten nicht erreichbar", err);
+    return {
+      status: "error",
+      formError: "Das hat leider nicht geklappt. Bitte versuchen Sie es erneut oder rufen Sie uns an.",
+      values: submittedValues(formData, FIELDS),
+    };
+  }
   const timing = checkReservationTime(
     seasons.map((season) => ({
       slug: season.slug,

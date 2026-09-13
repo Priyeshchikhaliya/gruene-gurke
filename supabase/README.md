@@ -84,6 +84,12 @@ npx supabase gen types typescript --project-id <ref> --schema public \
 npm run seed:generate
 ```
 
+## Keep-alive
+
+`migrations/0002_heartbeat.sql` legt die Tabelle `heartbeat` an, in die Vercel Cron
+täglich schreibt. Ohne sie pausiert das kostenlose Projekt nach etwa einer Woche.
+Einrichtung und Reihenfolge stehen im README im Hauptverzeichnis.
+
 ## Vor der Übergabe: Testdaten entfernen
 
 `testdaten-loeschen.sql` im SQL Editor ausführen. Es leert nur die

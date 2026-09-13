@@ -108,8 +108,9 @@ supabase/
   abwählen, und ein erneutes Speichern verschickt nichts doppelt.
 - **Ohne Resend-Schlüssel** wird nichts versendet; die Anfragen landen trotzdem in der
   Datenbank und im Verwaltungsbereich.
-- **Inhalte** (Karte, Zeiten, Galerie, Jobs, Texte) kommen aus Supabase. Schlägt eine
-  Abfrage fehl oder fehlen die Zugangsdaten, greifen die Inhalte aus `src/lib`.
+- **Inhalte** (Karte, Zeiten, Galerie, Jobs, Texte) kommen aus Supabase. Fehlen die
+  Zugangsdaten, greifen die Inhalte aus `src/lib`. Scheitert eine Abfrage, behält die
+  Website die zuletzt erzeugte Fassung, statt still auf alte Inhalte zurückzufallen.
 - **Öffentliche Seiten** sind statisch und werden alle zehn Minuten sowie nach jedem
   Speichern im Verwaltungsbereich neu erzeugt.
 
@@ -120,7 +121,7 @@ supabase/
 2. Umgebungsvariablen setzen (dieselben Schlüssel wie in `.env.example`):
    `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
    `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY`, `RESEND_FROM_EMAIL`,
-   `RESTAURANT_INBOX_EMAIL`.
+   `RESTAURANT_INBOX_EMAIL`, `CRON_SECRET`.
 3. In Supabase unter **Authentication → URL Configuration** die Produktionsadresse als
    Site URL eintragen und `https://<domain>/admin/passwort` zu den Redirect URLs
    hinzufügen. Sonst führt der Link zum Setzen des Passworts ins Leere.
@@ -128,6 +129,28 @@ supabase/
 
 Fehlt `NEXT_PUBLIC_SITE_URL`, greift die Produktionsadresse von Vercel. Kanonische
 Links, Sitemap und robots.txt zeigen dann trotzdem nicht auf localhost.
+
+## Supabase wach halten
+
+Kostenlose Supabase-Projekte pausieren nach etwa sieben Tagen ohne Aktivität. Besuche
+allein reichen nicht, weil die Seiten zwischengespeichert ausgeliefert werden. Deshalb
+ruft Vercel Cron täglich um 06:17 UTC `/api/cron/keepalive` auf, und der Endpunkt
+schreibt eine Zeile in die Tabelle `heartbeat`.
+
+Ein GitHub Action ist dafür ungeeignet: GitHub schaltet zeitgesteuerte Workflows in
+öffentlichen Repositories nach 60 Tagen ohne Aktivität ab.
+
+Reihenfolge beim Einrichten:
+
+1. `supabase/migrations/0002_heartbeat.sql` im SQL Editor ausführen.
+2. `CRON_SECRET` in Vercel unter Settings → Environment Variables (Production) setzen.
+   Erzeugen mit `openssl rand -base64 32 | tr -d '\n' | pbcopy`.
+3. Erst danach deployen. Umgebungsvariablen gelten nur für neue Deployments.
+4. Unter Settings → Cron Jobs prüfen, dass der Pfad erscheint, und einmal „Run“ drücken.
+
+Prüfen gegen die Produktionsadresse, nicht gegen eine Deploy-Adresse (die liegt hinter
+dem Vercel-Login): ohne Header `401`, mit `Authorization: Bearer <CRON_SECRET>` `200`,
+und `heartbeat.beat_at` rückt vor.
 
 ## Offene Punkte
 

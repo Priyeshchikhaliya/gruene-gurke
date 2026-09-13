@@ -113,6 +113,8 @@ export type ContactMessageRow = Stamps & {
   is_read: boolean;
 };
 
+export type HeartbeatRow = { id: number; beat_at: string; source: string | null };
+
 export type AdminUserRow = { user_id: string; name: string | null; created_at: string };
 
 type Table<Row, Req extends keyof Row, Gen extends keyof Row> = {
@@ -148,6 +150,7 @@ export type Database = {
         G | "message" | "status" | "internal_note"
       >;
       contact_messages: Table<ContactMessageRow, "name" | "email" | "message", G | "phone" | "is_read">;
+      heartbeat: Table<HeartbeatRow, "id", "beat_at" | "source">;
     };
     Views: Record<string, never>;
     Functions: { is_admin: { Args: Record<string, never>; Returns: boolean } };

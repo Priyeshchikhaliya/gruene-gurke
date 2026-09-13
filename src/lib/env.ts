@@ -42,6 +42,14 @@ export function requireSupabaseService() {
   return config;
 }
 
+/**
+ * Geheimnis für den täglichen Aufruf durch Vercel Cron. Wird getrimmt: Ein
+ * mitkopierter Zeilenumbruch würde sonst jede Anfrage scheitern lassen.
+ */
+export function cronSecret() {
+  return clean(process.env.CRON_SECRET);
+}
+
 export function resendConfig() {
   const apiKey = clean(process.env.RESEND_API_KEY);
   const from = clean(process.env.RESEND_FROM_EMAIL) ?? "Grüne Gurke <onboarding@resend.dev>";
